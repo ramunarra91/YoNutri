@@ -1,0 +1,284 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #FAF9F6;
+
+   line-height: 1.6;
+  color: #572121;
+}
+
+/* Header section start */
+ .yonutri-navbar {
+        font-family: 'Roboto Condensed', sans-serif;
+        position: sticky;
+        height: 105px;
+        top: 0;
+        z-index: 999;
+        background-color:#3e2723 ;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 0px;
+    }
+    .navbar-top{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        max-width: 1500px;
+        margin: auto;
+        
+    }
+    .nav-left .shop-link, .nav-left a, .nav-right a {
+        color: #FAF9F6;
+        font-weight: 400px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .nav-right {
+        display: flex;
+        gap: 1.4rem;
+        align-items: center;
+    }
+
+    .nav-right a:hover {
+        color: #FAF9F6;
+    }
+
+    .nav-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+/* Hidden Search Bar start here */
+.search-bar {
+  position: fixed;
+  top: -105px; /* hidden above the page */
+  left: 0;
+  width: 100%;
+  height: 105px;
+  background: white;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: top 0.4s ease;
+  z-index: 2000;
+}
+
+/* Input Style */
+.search-bar input {
+  width: 50%;
+  padding: 10px;
+  border: 1px solid black;
+  font-size: 16px;
+}
+
+/* Close Button */
+.close-search {
+  font-size: 24px;
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+/* Show State */
+.search-bar.show {
+  top: 0;
+}
+
+
+/* shop hide css start */
+/* SHOP PANEL */
+/* SHOP PANEL */
+.shop-panel {
+  position: absolute;
+  top: 105px; /* height of your header */
+  left: 0;
+  width: 100%;
+  background: #5dc0b9;
+  color: white;
+  overflow: hidden; /* hides content when collapsed */
+  max-height: 0; /* start collapsed */
+  transition: max-height 0.4s ease;
+  z-index: 1000;
+}
+
+/* Show state */
+.shop-panel.show {
+  max-height: 500px; /* enough to show content */
+}
+
+/* Panel Content Layout */
+.shop-panel-content {
+  display: flex;
+  max-width: 1200px;
+  /* margin-top: 0px; */
+  /* margin-left: -10px;   */
+  margin-right: auto;  /* prevents re-centering */
+  align-items: flex-start; /* keeps top aligned instead of stretching */
+}
+
+
+/* Left Sidebar */
+a.shop-link {
+  text-decoration: none;
+  color: inherit; /* use the same text color as the inside */
+  display: block; /* make link clickable across the whole sidebar */
+}
+.shop-sidebar {
+  width: 400px;
+  padding: 10px 20px;
+  background: #ffb300;
+ position: relative;
+ flex-shrink: 0;
+ text-decoration: none;
+}
+
+.shop-sidebar::after {
+   flex-shrink: 0;
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0; /* place on right edge */
+  width: 0.5px; /* thickness of line */
+  height: 1000%; /* make it longer than the sidebar height */
+  background-color: #173215; /* line color */
+}
+.shop-sidebar h5 {
+  font-size: 1rem;
+  padding-left: 20px;
+  color: #eee;
+}
+/* Right Grid */
+ .category-grid {
+  width: 900px;
+    flex: 1; 
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 20px; 
+  padding: 20px; 
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between; /* space text and image */
+  align-items: center;           /* vertically align */
+  padding: 10px 15px;
+  background-color: #f7f7f7;
+  border-radius: 15px;
+}
+
+.category-item span {
+  font-weight: 600;
+  color: #3e2723;
+   width: 100px;
+}
+
+.category-item img {
+  width: 100px;   /* adjust size */
+  height: 100px;
+  object-fit: contain;
+}
+
+
+/* Main Content */
+    .container {
+    font-family: 'Inter', sans-serif;
+     line-height: 1.6;
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 0 1rem;
+    }
+
+    .container h1 {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 3rem;
+      margin-bottom: 3rem;
+      text-align: left;
+    }
+
+    .container .qa-block {
+      margin-bottom: 3rem;
+    }
+
+    .question {
+      font-family: 'Archivo Black', sans-serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .answer {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .container a {
+      color: #e12c87;
+      text-decoration: none;
+    }
+
+    .container a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container h1 {
+        font-size: 2.2rem;
+      }
+
+      .question {
+        font-size: 1.5rem;
+      }
+
+      .answer {
+        font-size: 0.95rem;
+      }
+    }  
+    
+
+
+
+
+
+
+    /* footer css start */
+/* Footer background set to #3e2723 */
+
+
+
+
+.marquee-section {
+  background-color: #3e2723; /* Chocolate brown */
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.marquee-content {
+  display: flex;
+  white-space: nowrap;
+  animation: scroll-marquee 20s linear infinite;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  gap: 2rem;
+}
+
+@keyframes scroll-marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Story</title>
+   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+/* put this near the top of your CSS */
+
+
+
+body {
+  background-color: #FAF9F6;
+  color: #3e2723;
+}
+
+/* Header section start */
+
+/* === Header color override === */
+
+ /* cart side bar css */
+ .yonutri-navbar {
+        font-family: 'Roboto Condensed', sans-serif;
+        position: sticky;
+        height: 105px;
+        top: 0;
+        z-index: 999;
+        background-color:#3e2723 ;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 0px;
+    }
+    .navbar-top{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        max-width: 1500px;
+        margin: auto;
+        
+    }
+    .nav-left .shop-link, .nav-left a, .nav-right a {
+        color: #FAF9F6;
+        font-weight: 400px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .nav-right {
+        display: flex;
+        gap: 1.4rem;
+        align-items: center;
+    }
+
+    .nav-right a:hover {
+        color: #FAF9F6;
+    }
+
+    .nav-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    
+.yonutri-navbar.hidden {
+  transform: translateY(-100%);
+}
+
+
+    /* cart section sidebar*/
+.cart-sidebar 
+{
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease;
+    padding: 20px;
+    z-index: 1001;
+     border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
+.cart-sidebar.active 
+{
+    right: 0;
+}   
+.cart-header 
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;  
+}    
+.cart-header h3 {
+          font-size: medium;
+        }
+        .cart-header i {
+          color: #572121 ;
+          font-size: medium;
+        }
+        
+        .cart-body{
+          margin: 200px 10px 150px 10px;
+        }                
+.cart-body i {
+  display: block;
+  text-align: center;
+  font-size: 24px; /* optional for size */
+   margin: 10px ;  
+}        
+
+.cart-body p {
+
+  font-size: 1rem;
+  color: #666;
+  margin: 20px auto 10px auto;
+  text-align: center;
+}
+.cart-body button {
+  padding: 10px 15px;
+  background-color: #3e2723;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+.cart-body button:hover {
+  background-color: #572121;
+}
+.cart-body i{
+  text-align: center;
+}
+
+.close-cart 
+{
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+.overlay 
+{
+    position: fixed;
+    top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+}
+
+.overlay.active 
+{
+    display: block;
+}
+/*Responsive adjustments */
+@media (max-width: 768px) 
+{  
+    .cart-sidebar 
+    {
+      width: 300px;
+    }
+}
+@media (max-width: 480px) 
+{
+    .cart-sidebar 
+    {
+        width: 280px;
+    }
+}
+
+/* Hidden Search Bar start here */
+.search-bar {
+  position: fixed;
+  top: -105px; /* hidden above the page */
+  left: 0;
+  width: 100%;
+  height: 105px;
+  background: white;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: top 0.4s ease;
+  z-index: 2000;
+}
+
+/* Input Style */
+.search-bar input {
+  width: 50%;
+  padding: 10px;
+  border: 1px solid black;
+  font-size: 16px;
+}
+ body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6; /* Adjusted for better readability */
+            background: #000; /* fallback */
+            color: #f5f5dc;  /* off-white */
+        }
+       
+
+        .hero-section {
+            width: 100%;
+            min-height: 100vh;
+            background-image: url('images/Our\ Story\ -\ Image\ -Photoroom.jpg'); /* replace with your file */
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 128, 128, 0.7); /* teal overlay */
+            z-index: 1;
+        }
+
+        .main-content {
+            position: relative;
+            z-index: 2;
+            width: 90%;               
+            margin: 40px auto;
+            padding: 20px;
+            background-color: transparent;
+            box-sizing: border-box;
+        }
+
+        /* Our Story heading */
+        .main-content h1 {
+            font-size: 5em; /* Increased font size for Our Story heading */
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        /* Hello text */
+        .main-content .intro-text {
+            font-size: 1.5em; /* Increased font size */
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        /* Content paragraphs */
+        .main-content p {
+            font-size: 1.2em; /* Increased font size */
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        /* Quote */
+        .main-content blockquote {
+            font-size: 1.5em; /* Increased font size */
+            font-style: italic;
+            margin: 2rem 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <header class="yonutri-navbar">
+    <div class="navbar-top">
+      <div class="nav-left">
+        <a href="#" class="shop-link"><i class="fas fa-arrow-up-right-from-square"></i> SHOP</a>
+      </div>
+
+      <div class="nav-center">
+        <a href="index.html" class="logo-link">
+  <img src="images/WhatsApp Image 2025-08-08 at 9.47.38 AM.jpeg" alt="Yo Nutri Logo" class="nav-logo" />
+</a>
+
+      </div>
+      <div class="nav-right">
+  <a href="#" class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></a>
+  <a href="login.html" id="userIcon"><i class="fa-solid fa-user"></i></a>
+<a href="#" id="cartIcon">CART <i class="header-icon fa-solid fa-cart-shopping"></i></a>
+  
+</div>
+    </div>
+    <!-- HIDDEN SEARCH BAR start here -->
+<div class="search-bar" id="searchBar">
+  <input type="text" placeholder="Search" />
+  <span class="close-search" id="closeSearch">&times;</span>
+</div>
+    </div>
+  </header> 
+
+    <div class="hero-section">
+        <div class="main-content">
+            <h1>Our Story</h1>
+            <p class="intro-text">Hello, and nice to meet you!</p>
+            <p>We at Yo! Nutri, like it simple.</p>
+            <p>
+                Simple things go into our products too. Like the promise that our combinations 
+                of often extraordinary ingredients taste amazing. And flavours and ingredients 
+                inspired by nature, which means no added artificial colours, flavours and fillers.
+            </p>
+            <p>
+                We believe that when you're on the go and doing things, the last things you 
+                need to put into your body are things that aren't simple or natural. So we use 
+                only ingredients you can see and ingredients you can taste. And that's why we let 
+                them do the talking.
+            </p>
+            <p>
+                Thanks for reading this and please enjoy Yo! Nutri products, they couldn’t be nicer!
+            </p>
+            <blockquote>“We let our ingredients do the talking”</blockquote>
+        </div>
+    </div>
+<!--footer-->
+
+   <footer class="custom-footer">
+  <div class="footer-wrapper">
+
+    <!-- Logo + Description -->
+    <div class="footer-column logo-column">
+      <div class="logo-circle">
+        <img src="images/WhatsApp Image 2025-08-08 at 9.47.38 AM.jpeg" alt="Yo! Nutri Logo">
+      </div>
+      <p>
+        WE’RE A NUTRITION-LED FOOD COMPANY THAT PRIDES ITSELF IN MAKING TASTY AND SIMPLE FOOD THAT’S GOOD FOR YOU. ALL WITHOUT ANY ARTIFICIAL COLOURS, CHEMICALS OR PRESERVATIVES. WE ONLY USE INGREDIENTS YOU CAN SEE AND TASTE. AND THAT’S WHY WE LET THEM DO THE TALKING.
+        <br> <br/>
+        GO ON AND TRY SOME!
+      </p>
+       <div class="social-icons">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+
+    <!-- SHOP -->
+    <div class="footer-column">
+      <h4>SHOP</h4>
+      <ul>
+        <li><a href="#">ALL PRODUCTS</a></li>
+        <li><a href="#">NEW LAUNCHES & OFFERS</a></li>
+        <li><a href="#">PROTEIN</a></li>
+        <li><a href="#">BARS</a></li>
+      </ul>
+    </div>
+
+    <!-- QUICK LINKS -->
+    <div class="footer-column">
+      <h4>QUICK LINKS</h4>
+      <ul>
+        <li><a href="ship.html">SHIPPING & DELIVERY</a></li>
+        <li><a href="terms and conditions.html">TERMS AND CONDITIONS</a></li>
+        <li><a href="privacy.html">PRIVACY POLICY </a></li>
+      </ul>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="footer-column">
+      <h4>CONTACT US</h4>
+      <p>PH: ‪+919606030616‬</p>
+      <p>AVAILABLE MON TO SAT : 10 AM – 6 PM</p>
+      <p>EMAIL: <a href="mailto:hello@yonutri.in" style="color: aliceblue;">HELLO@YONUTRI.IN</a></p>
+      <p>WE TRY TO REPOND WITHIN 48 HOURS.</p>
+    </div>
+
+    <!-- ✅ OUR STORY (Placed correctly inside wrapper) -->
+    <div class="footer-column">
+      <h4>OUR STORY</h4>
+     <ul>
+        <li><a href="our story.html">WHY WE EXIT?</a></li>
+      </ul>
+    </div>
+
+  </div>
+<hr>
+  <p class="quote">Who needs a magic wand when you've got our protein bars? They'll turn your cravings into happy little lettuce leaves. Poof!</p>
+  <hr>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 Yo! Nutri.</p>
+  </div>
+</footer>
+<!--marquee -->
+<section class="marquee-alt" id="marqueeAlt">
+  <div class="marquee-alt__track" id="trackAlt">
+    <div class="marquee-alt__content" id="contentAlt">
+      <span>IT’S SIMPLE UNTIL YOU MAKE IT COMPLICATED •&nbsp;</span>
+      <span>WE MAKE HEALTHY EASY •&nbsp;</span>
+      <span>WE LET OUR INGREDIENTS DO THE TALKING! •&nbsp;</span>
+    </div>
+  </div>
+</section>
+<script>
+(function () {
+  const container = document.getElementById('marqueeAlt');
+  const track     = document.getElementById('trackAlt');
+  const content   = document.getElementById('contentAlt');
+
+  if (!container || !track || !content) return;
+
+  function setup() {
+    // remove any previous clones
+    [...track.children].forEach((el, i) => { if (i) el.remove(); });
+
+    const blockWidth = content.scrollWidth;
+    let totalWidth   = blockWidth;
+
+    // clone enough times so the track stays filled with no gap
+    while (totalWidth < container.clientWidth + blockWidth * 2) {
+      track.appendChild(content.cloneNode(true));
+      totalWidth += blockWidth;
+    }
+
+    // shift distance = width of one content block
+    track.style.setProperty('--shift', blockWidth + 'px');
+
+    // duration from pixels-per-second (read from :root --px-per-sec)
+    const styles   = getComputedStyle(document.documentElement);
+    const pps      = parseFloat(styles.getPropertyValue('--px-per-sec')) || 120;
+    const seconds  = Math.max(6, blockWidth / pps);
+    track.style.setProperty('--duration', seconds + 's');
+  }
+
+  const init = () => setup();
+
+  // wait for fonts (so widths are accurate), but also run immediately
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(init);
+  } else {
+    window.addEventListener('load', init, { once: true });
+  }
+  init();
+
+  // rebuild on resize
+  window.addEventListener('resize', setup);
+})();
+</script>
+<!--navbar hide-->
+<script>
+let lastScrollY = window.scrollY;
+const navbar = document.querySelector('.yonutri-navbar');
+
+window.addEventListener('scroll', () => {
+  if (window.scrollY > lastScrollY) {
+    // Scrolling down → hide navbar
+    navbar.classList.add('hidden');
+  } else {
+    // Scrolling up → show navbar
+    navbar.classList.remove('hidden');
+  }
+  lastScrollY = window.scrollY;
+});
+</script>
+
+
+</body>
+</html>

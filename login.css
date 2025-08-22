@@ -1,0 +1,340 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #FAF9F6;
+  color: #572121;
+}
+
+/* Header section start */
+ .yonutri-navbar {
+        font-family: 'Roboto Condensed', sans-serif;
+        position: sticky;
+        height: 105px;
+        top: 0;
+        z-index: 999;
+        background-color:#3e2723 ;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 0px;
+    }
+    .navbar-top{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        max-width: 1500px;
+        margin: auto;
+        
+    }
+    .nav-left .shop-link, .nav-left a, .nav-right a {
+        color: #FAF9F6;
+        font-weight: 400px;
+        text-decoration: none;
+        font-size: 1.2rem;
+        transition: color 0.3s ease;
+    }
+
+    .nav-right {
+        display: flex;
+        gap: 1.4rem;
+        align-items: center;
+    }
+
+    .nav-right a:hover {
+        color: #FAF9F6;
+    }
+
+    .nav-logo {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+
+
+
+
+
+
+/* footer css start */
+.custom-footer {
+  background-color: #3e2723;
+  color: white;
+  padding: 50px 20px 40px;
+  font-family: sans-serif;
+}
+
+.footer-wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.footer-column:not(.logo-column) {
+  margin-left: -20px; 
+}
+
+.footer-link-group {
+  display: flex;
+  gap: 24px;             /* smaller gap between the 3 columns */
+  flex: 1; 
+}
+.footer-column {
+  flex: 1 1 200px;
+  max-width: 200px;
+  gap: -1000px;
+}
+
+.logo-column {
+  max-width: 320px;
+  flex: 0 0 300px;       /* fixed width for left block */
+  margin-right: 80px;
+}
+
+.logo-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.logo-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.footer-column h4 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 10px;
+}
+
+.footer-column ul li a {
+  text-decoration: none;
+  color: white;
+  transition: color 0.3s;
+}
+
+.footer-column ul li a:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.social-icons a {
+  color: #5d4037;
+  background: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  margin-right: 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+  background-color: #3e2723;
+  color: white;
+  transform: translateY(-3px);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 30px 0;
+}
+
+.quote {
+  text-align: center;
+  font-style: italic;
+  margin: 30px 0;
+  color: white;
+  margin-bottom: 0px;
+}
+
+.footer-bottom {
+  text-align: center;
+  /* padding-top: 20px; */
+  font-size: 0.9rem;
+}
+.custom-footer a {
+  text-decoration: none;
+ 
+}
+footer h4 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+
+footer p, a {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+}
+
+@media (max-width: 768px) {
+  .footer-column:not(.logo-column) {
+    margin-left:0;
+}
+}
+
+
+
+
+/*login css here*/
+.form-container {
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+}
+.form-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+.form-container p {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+}
+.form-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #999;
+    font-size: 1rem;
+}
+.form-container a {
+    font-size: 0.9rem;
+    color: #000;
+    text-decoration: none;
+}
+.form-container button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.hidden {
+    display: none;
+}
+
+
+
+
+
+.form-container {
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+}
+.form-container h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+.form-container p {
+    font-size: 0.95rem;
+    margin-bottom: 15px;
+}
+.form-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #999;
+    font-size: 1rem;
+}
+.form-container a {
+    font-size: 0.9rem;
+    color: #000;
+    text-decoration: none;
+}
+.form-container button {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+.hidden {
+    display: none;
+}
+
+
+
+#accountPage {
+    max-width: 1200px;
+    margin: auto;
+    margin-left: -800px;
+    padding: 30px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.account-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.account-left,
+.account-right {
+    flex: 1;
+    min-width: 250px;
+}
+
+#accountPage h1 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+#accountPage h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+}
+
+.logout-line {
+    margin-bottom: 30px;
+}
+
+#accountPage p,
+#accountPage a {
+    font-size: 0.95rem;
+}
+
+.muted-text {
+    color: #555;
+}
+
+.address-link {
+    color: blue;
+    text-decoration: underline;
+}
+
+
+
+
+
+#accountPage h1, 
+#accountPage h2 {
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 10px;
+}
+#accountPage p, 
+#accountPage a {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+}

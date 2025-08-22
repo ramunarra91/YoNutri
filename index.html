@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yo Nutri!</title>
+
+  <link rel="logo" href="C:\Users\Sagar\OneDrive\Desktop\new Yo! Nutri\images\WhatsApp Image 2025-08-08 at 9.47.38 AM.jpeg">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Icons & Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mozilla+Text:wght@200..700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap (hero) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+  :root{
+    --page-bg:#f4dec4; --arch:#a57248; --ink:#3C2821; --muted:#8a7b6f;
+    --pill:#1e2d22; --pill-ink:#fff; --pill-muted:#eeeeee; --pill-muted-ink:#3C2821;
+    --badge:#0b8c00; --card-gap:32px; --border:#e9e9e9;
+    --green:#0aa000; --green-ink:#0a7f00;
+    --px-per-sec:120; /* marquee speed helper */
+  }
+
+  *{font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  body{ background:var(--page-bg); color:var(--ink) }
+
+  /* Top bar (your global CSS can still style .yonutri-navbar) */
+  header.topbar{ background:#fff;border-bottom:1px solid var(--border) }
+  header .wrap{margin:0 auto;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .cart-link{font-weight:900;color:#1a1a1a;text-decoration:none}
+
+  /* Overlay */
+  .overlay{ position:fixed; inset:0; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:.25s; z-index:1001 }
+  .overlay.active{ opacity:1; pointer-events:auto }
+
+  /* Drawer */
+  .cart{ position:fixed; top:0; right:0; bottom:0; width:392px; max-width:88vw; background:#fff;
+        transform:translateX(110%); transition:.3s ease; z-index:1002; display:grid;
+        grid-template-rows:auto 1fr auto; border-left:1px solid var(--border) }
+  .cart.active{ transform:translateX(0) }
+
+  /* Header */
+  .cart-hd{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid var(--border) }
+  .cart-title{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:16px; letter-spacing:.1px }
+  .cart-title i{ font-size:15px }
+  .cart-close{ cursor:pointer; font-size:18px; color:#222 }
+
+  /* Body */
+  .cart-bd{ padding:14px 14px 0; overflow:auto; scrollbar-width:none; -ms-overflow-style:none }
+  .cart-bd::-webkit-scrollbar{ width:0; height:0 }
+
+  /* Cart rows */
+  .c-items{ display:flex; flex-direction:column; gap:12px; margin-bottom:12px }
+  .c-row{
+    display:grid; grid-template-columns:64px 1fr auto; gap:12px; align-items:start;
+    background:#fff; border:1px solid #ededed; border-radius:16px; padding:12px;
+    box-shadow:0 1px 0 rgba(0,0,0,.03) inset;
+  }
+  .c-thumb{ width:64px; height:64px; object-fit:contain; background:#FFB347; border-radius:12px }
+  .c-mid{ min-width:0 }
+  .c-title{
+    font-weight:800; font-size:14px; line-height:1.3; margin:0;
+    white-space:normal; overflow:visible; max-width:220px; word-break:break-word;
+  }
+  .c-sub{ font-size:12px; color:#6f6f6f; margin:4px 0 8px }
+  .c-right{ display:flex; align-items:center; gap:10px }
+
+  /* right-side stacked prices */
+  .c-prices{ display:flex; flex-direction:column; align-items:flex-end; line-height:1.05; margin-right:2px; min-width:72px }
+  .c-price{ font-weight:900; font-size:14px; color:#1f1f1f }
+
+  .c-trash{ border:none; background:transparent; color:#b5b5b5; width:30px; height:30px; border-radius:8px; cursor:pointer }
+  .c-trash:hover{ color:#222 }
+
+  /* Qty pill */
+  .qty{
+    display:flex; align-items:center; gap:0;
+    border:1.5px solid #121212; border-radius:9999px;
+    padding:4px; background:#fff; height:40px;
+  }
+  .qty .dec,.qty .inc{
+    border:0; cursor:pointer; height:32px; min-width:40px;
+    border-radius:10px; font-weight:900; font-size:16px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .qty .dec{ background:#e9e9e9; color:#222 }
+  .qty.is-single .dec{ background:#efefef; color:#9a9a9a }
+  .qty .count{ width:33px; text-align:center; font-weight:700; font-size:14px; color:#1f1f1f }
+  .qty .inc{ background:#3e2723; color:#fff }
+
+  /* Sections */
+  .cart-section{ border-top:1px solid var(--border); margin:14px -14px 0; padding:10px }
+  .sec-title{ font-weight:800; font-size:14px; margin:0 0 12px }
+
+  /* Coupon band */
+  .coupon-band{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    border:1px solid #e7efe7; border-radius:14px; padding:14px 16px; background:#fff;
+  }
+  .coupon-left{ display:flex; align-items:center; gap:10px }
+  .coupon-left .icon{
+    width:22px; height:22px; display:grid; place-items:center;
+    border-radius:9999px; background:#e9f7ea; color:#138a00
+  }
+  .coupon-text{ display:flex; flex-direction:column; line-height:1.2 }
+  .coupon-main{ font-weight:800; color:#138a00; font-size:14px }
+  .coupon-sub{ font-size:12px; color:#666 }
+  .coupon-apply{ padding:6px 12px; border:1px solid #cfd8cf; border-radius:12px; background:#fff; font-weight:800; font-size:12px; cursor:pointer }
+  .applied-row{ display:flex; align-items:center; gap:8px; color:#0a7f00; font-weight:700; font-size:13px; margin-top:10px }
+  .applied-row i{ color:#0a7f00 }
+
+  /* OFFERS */
+  .offers-wrap{ border:1px solid var(--border); border-radius:14px; padding:12px; background:#fff }
+  .offers-head{ font-weight:800; color:#138a00; margin:0 0 10px }
+  .offer-list{ display:flex; gap:12px; overflow:auto; padding-bottom:6px; scroll-snap-type:x mandatory }
+  .offer-card{
+    flex:0 0 150px; border:1px solid #e9e9e9; border-radius:14px; padding:10px;
+    display:flex; flex-direction:column; gap:8px; background:#fff; scroll-snap-align:start
+  }
+  .offer-thumb{ width:100%; height:76px; object-fit:cover; background:#f7f7f7; border-radius:10px }
+  .offer-title{ font-size:12px; font-weight:800; line-height:1.2; min-height:32px }
+  .offer-price{ display:flex; align-items:center; justify-content:space-between; font-size:12px }
+  .offer-old{ text-decoration:line-through; color:#777 }
+  .offer-cta,
+  .offer-qty{
+    height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:900; cursor:pointer
+  }
+  .offer-cta{ border:1px solid #2b8a00; background:#fff }
+  .offer-qty{ border:1.5px solid #121212; gap:6px; padding:0 4px }
+  .offer-qty .dec,.offer-qty .inc{
+    height:26px; min-width:28px; border:0; border-radius:8px; font-weight:900; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer
+  }
+  .offer-qty .dec{ background:#e9e9e9 }
+  .offer-qty .inc{ background:#16271b; color:#fff }
+  .offer-qty .count{ min-width:20px; text-align:center; font-weight:800 }
+
+  /* Footer */
+  .cart-ft{ border-top:1px solid var(--border); background:#fff; padding:12px 14px; display:grid; gap:10px }
+  .total-line{ display:flex; align-items:center; justify-content:space-between }
+  .total-left{ display:flex; flex-direction:column }
+  .total-left small{ color:#666 }
+  .checkout{ width:100%; background:#FFA500; color:#fff; border:none; border-radius:9999px; padding:12px 16px; font-weight:900; cursor:pointer }
+  .secured{ text-align:center; font-size:11px; color:#666 }
+
+  /* Grid (products) */
+  .yo-products{ padding:40px 0 }
+  .yo-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--card-gap);  margin:0 auto }
+  .yo-card{ position:relative; display:flex; flex-direction:column }
+
+  /* Arch image + hover zoom */
+  .yo-arch {
+    width:100%; aspect-ratio:3/4; background:var(--arch);
+    border-radius:50% 50% 0 0 / 32% 32% 0 0; overflow:hidden; position:relative;
+  }
+  .yo-arch img{ width:100%; height:100%; object-fit:contain; display:block; transition:transform .4s ease }
+  .yo-arch:hover img{ transform:scale(1.08) }
+
+  /* Badge */
+  .yo-badge{
+    position:absolute; top:12px; right:12px;
+    background:#0a7f00; color:#fff; padding:6px 14px; font-size:12px; font-weight:800;
+    text-transform:uppercase; border-radius:30px; letter-spacing:.8px; line-height:1.2;
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
+  }
+
+  /* Product info */
+  .yo-info{ padding:14px 6px 0 }
+  .yo-title{ margin:12px 0 8px; line-height:1.2; min-height:48px; display:-webkit-box;  -webkit-box-orient:vertical; overflow:hidden }
+  .yo-title a{ color:var(--ink); text-decoration:none; font-weight:800; font-size:20px }
+  .yo-card:hover .yo-title a{ text-decoration:underline }
+  .yo-price{ margin:0 0 4px; font-size:20px; font-weight:900; color:#1a1a1a }
+  .yo-price .old{ text-decoration:line-through; color:#8a7b6f; font-weight:600; margin-right:8px; font-size:18px }
+  .yo-tax{ margin:0 0 12px; font-size:13px; color:#777 }
+  .yo-actions{ margin-top:auto }
+  .yo-cta,.qty.yo-qty{ width:100%; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center }
+  .yo-cta{ border:none; background:#FFA500; color:#fff; font-weight:900; font-size:17px; cursor:pointer }
+  .yo-qty{ border:1.5px solid #000; background:#fff; gap:14px }
+  .yo-qty .inc{ background:var(--pill); color:#fff }
+  .yo-qty .dec{ background:var(--pill); color:#fff }
+  .yo-qty.is-single .dec{ background:var(--pill-muted); color:var(--pill-muted-ink) }
+
+  @media (max-width:1200px){ .yo-grid{ grid-template-columns:repeat(3,1fr) } }
+  @media (max-width:900px){  .yo-grid{ grid-template-columns:repeat(2,1fr) } }
+  @media (max-width:560px){  .yo-grid{ grid-template-columns:1fr } }
+
+  /* Split controls */
+  .yo-split { display:flex;width:100%;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.08); }
+  .pack-select {
+    width:100%;max-width:160px;height:42px;border:1px solid #ffb347;background:#fff8f0;
+    font-size:13px;font-weight:600;color:#2b1e17;padding:0 35px 0 12px;border-radius:6px;cursor:pointer;
+    appearance:none;outline:none;position:relative;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><path fill='black' d='M0 2 L5 7 L10 2'/></svg>");
+    background-repeat:no-repeat;background-position:right 10px center;background-size:12px;
+  }
+  .yo-cta { flex:1;height:44px;border:1.5px solid #f8c7da;border-left:0;background:#FFB347;color:#fff;font-weight:900;font-size:12px;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;border-radius:0;transition:transform .06s, filter .2s; }
+  .yo-cta:hover{ filter:brightness(.95) }
+  .yo-cta:active{ transform:translateY(1px) }
+
+  @media (max-width:520px){
+    .yo-split{ flex-direction:column;border-radius:10px }
+    .pack-select,.yo-cta{ border-radius:0;border:1.5px solid #f8c7da }
+    .pack-select{ border-bottom:0 } .yo-cta{ border-top:0 }
+  }
+
+  /* image slide animations */
+  .yo-arch img.slide-out { animation: yoSlideOut .35s ease forwards; }
+  .yo-arch img.slide-in  { animation: yoSlideIn  .35s ease forwards; }
+  @keyframes yoSlideOut { from{transform:translateX(0);opacity:1} to{transform:translateX(-40%);opacity:0} }
+  @keyframes yoSlideIn  { from{transform:translateX(40%);opacity:0} to{transform:translateX(0);opacity:1} }
+
+  /* Sidebar mini styles kept */
+  .cart-sidebar .cart-body{ padding:16px; display:flex; flex-direction:column; height:100%; }
+  .cart-sidebar .cart-empty{ text-align:center; color:#777; margin:24px 0; }
+  .cart-sidebar .cart-items{ flex:1; overflow:auto; display:flex; flex-direction:column; gap:12px; }
+  .cart-sidebar .cart-item{ display:flex; gap:10px; align-items:center; border-bottom:1px solid #eee; padding:8px 0; }
+  .cart-sidebar .thumb{ width:56px; height:56px; object-fit:contain; background:#f6f6f6; border-radius:8px; }
+  .cart-sidebar .meta{ flex:1; }
+  .cart-sidebar .ci-title{ font-weight:700; font-size:14px; line-height:1.2; margin-bottom:4px; }
+  .cart-sidebar .ci-price{ font-weight:700; font-size:14px; margin-bottom:6px; }
+  .cart-sidebar .qty-controls{ display:inline-flex; align-items:center; gap:8px; border:1px solid #ddd; border-radius:20px; padding:4px 8px; }
+  .cart-sidebar .qty-controls button{ border:none; background:transparent; font-size:18px; width:24px; height:24px; cursor:pointer; }
+  .cart-sidebar .remove{ border:none; background:transparent; font-size:20px; line-height:1; padding:4px; cursor:pointer; }
+  .cart-sidebar .cart-footer{ border-top:1px solid #ddd; padding-top:12px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  #checkoutBtn{ background:#FFA500; color:#fff; border:none; border-radius:9999px; padding:10px 16px; font-weight:800; }
+  #continueShopping2{ background:transparent; border:1px solid #ccc; border-radius:9999px; padding:10px 14px; }
+  .cart-sidebar .qty-controls{ border:1.5px solid #000 }
+  .cart-sidebar .qty-controls button{ color:#000 !important; font-weight:900 }
+  .cart-sidebar .qty-controls button:hover{ opacity:.85 }
+
+  /* Marquee CSS */
+  .marquee, .marquee-alt { overflow:hidden; }
+  .marquee__track, .marquee-alt__track {
+    display:flex; gap:2rem; will-change:transform;
+    animation: marquee var(--duration, 20s) linear infinite;
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-1 * var(--shift, 100%))); }
+  }
+  .marque-section{ padding:10px 0; text-align:center; font-weight:700 }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="yonutri-navbar">
+    <div class="navbar-top">
+      <div class="nav-left">
+        <a href="#" class="shop-link"><i class="fas fa-arrow-up-right-from-square"></i> SHOP</a>
+      </div>
+      <div class="nav-center">
+        <a href="index.html" class="logo-link">
+          <img src="images/WhatsApp Image 2025-08-08 at 9.47.38 AM.jpeg" alt="Yo Nutri Logo" class="nav-logo" />
+        </a>
+      </div>
+      <div class="nav-right">
+        <a href="#" class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="login.html" id="userIcon"><i class="fa-solid fa-user"></i></a>
+        <a href="#" id="cartIcon">CART <i class="header-icon fa-solid fa-cart-shopping"></i></a>
+      </div>
+    </div>
+    <!-- hidden search -->
+    <div class="search-bar" id="searchBar">
+      <input type="text" placeholder="Search" />
+      <span class="close-search" id="closeSearch">&times;</span>
+    </div>
+  </header>
+
+  <!-- Shop panel -->
+  <div class="shop-panel" id="shopPanel">
+    <div class="shop-panel-content">
+      <a href="#" class="shop-link"><div class="shop-sidebar"><h5>SHOP BY CATEGORY</h5></div></a>
+      <div class="category-grid">
+        <a href="" class="shop-link"><div class="category-item"><span>New Launches & Offers</span><img src="../new Yo! Nutri/images/image (1).png" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>All Products</span><img src="../new Yo! Nutri/images/image (2).png" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="../new Yo! Nutri/images/chocolate6.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Bars</span><img src="../new Yo! Nutri/images/roasted6.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Bars</span><img src="../new Yo! Nutri/images/roasted7.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="../new Yo! Nutri/images/roasted8.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="../new Yo! Nutri/images/roasted9.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="../new Yo! Nutri/images/chocolate7.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>All Products</span><img src="../new Yo! Nutri/images/chocolate8.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Why Protein</span><img src="../new Yo! Nutri/images/chocolate8.jpg" alt=""></div></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- overlay for drawer -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+      <div class="carousel-inner">
+        <div class="carousel-item active"><img src="images/image_3.png" class="d-block w-100" alt=""></div>
+        <div class="carousel-item"><img src="images/image_2.png" class="d-block w-100" alt=""></div>
+        <div class="carousel-item"><img src="images/image_1.png" class="d-block w-100" alt=""></div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></button>
+    </div>
+  </section>
+
+  <!-- Cart Drawer -->
+  <aside class="cart" id="cart">
+    <div class="cart-hd">
+      <div class="cart-title"><i class="fa-solid fa-cart-shopping"></i><span id="cartTitle">Your cart · 0 item</span></div>
+      <i class="fa-solid fa-xmark cart-close" id="closeCart" title="Close"></i>
+    </div>
+    <div class="cart-bd">
+      <div class="c-items" id="cartItems"></div>
+
+      <div class="cart-section">
+        <div class="sec-title">Offers & Rewards</div>
+
+        <!-- SUMMER10: 10% off, no minimum -->
+        <div id="couponBand" class="coupon-band"
+             data-code="SUMMER10" data-type="percent" data-amount="10" data-min="0" style="display:none">
+          <div class="coupon-left">
+            <div class="icon"><i class="fa-solid fa-badge-percent"></i></div>
+            <div class="coupon-text">
+              <span id="couponMain" class="coupon-main">Save ₹0</span>
+              <span class="coupon-sub">with '<b>SUMMER10</b>'</span>
+              <span class="coupon-sub">View other coupons ›</span>
+            </div>
+          </div>
+          <button id="applyCouponBtn" class="coupon-apply" type="button">Apply</button>
+        </div>
+
+        <div id="appliedRow" class="applied-row" style="display:none">
+          <i class="fa-regular fa-circle-check"></i>
+          <span><span id="appliedSavings">₹0</span> total savings · 1 applied</span>
+          <button id="removeCouponBtn" class="coupon-apply" type="button">Remove</button>
+        </div>
+      </div>
+
+      <div class="cart-section">
+        <div class="offers-wrap">
+          <div class="offers-head">Special Offers For You</div>
+          <div class="offer-list" id="offerList"></div>
+        </div>
+        <label class="applied-row" style="margin-top:10px;color:#444;font-weight:600">
+          <input type="checkbox" checked style="accent-color:#0a7f00;margin-right:8px"> Keep me posted about sales and offers
+        </label>
+      </div>
+    </div>
+
+    <div class="cart-ft">
+      <div class="total-line">
+        <div class="total-left">
+          <strong id="totalRupees">₹0</strong>
+          <small>Estimated total</small>
+        </div>
+      </div>
+      <button id="checkoutBtn" class="checkout" type="button">Checkout</button>
+      <div class="secured">🔒 Secured by <b>shopflo</b></div>
+    </div>
+  </aside>
+
+  <!-- marquee notice (static line) -->
+  <section class="marque-section">
+    <div class="marque-content">
+      <span>Get 10% off with code YUMMY • </span>
+      <span>Orders dispatch between 24-48 hours • </span>
+      <span>15% off over ₹1000. Use code CLEANSNACK •</span>
+    </div>
+  </section>
+
+  <!-- PRODUCTS GRID -->
+  <section class="yo-products" id="yo-products">
+    <div class="yo-grid">
+
+      <!-- Card 1 -->
+      <article class="yo-card" data-sku="creamy-dark-500" data-pack="Pack of 6">
+        <div class="yo-arch">
+          <a href="product-detail.html">
+            <img src="images/CREAMY_Dark_Chocolate-removebg-preview.png" alt="CREAMY Dark Chocolate">
+          </a>
+        </div>
+        <span class="yo-badge">NEW</span>
+        <div class="yo-info">
+          <h3 class="yo-title">
+            <a href="product-detail.html">CREAMY - Dark Chocolate Peanut Butter - Box of - <span class="gram-val">950 g</span></a>
+          </h3>
+          <p class="yo-price"></p><p class="yo-tax"></p>
+        </div>
+        <div class="yo-actions">
+          <div class="yo-split">
+            <select class="pack-select">
+              <option value="350" selected data-img="images/CREAMY_Dark_Chocolate-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option value="950" data-img="images/CREAMY_Dark_Chocolate-removebg-preview.png" data-price="1000">Pack of 950g</option>
+            </select>
+            <button class="yo-cta" type="button">ADD TO CART</button>
+            <div class="yo-qty qty is-single" hidden>
+              <button class="dec" type="button" aria-label="Decrease">−</button>
+              <span class="count">1</span>
+              <button class="inc" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="yo-card" data-sku="creamy-dates-350" data-pack="Pack of 6">
+        <div class="yo-arch">
+          <a href="product-detail.html">
+            <img src="images/CREAMY_Dates-removebg-preview.png" alt="CREAMY Dates">
+          </a>
+        </div>
+        <span class="yo-badge">NEW</span>
+        <div class="yo-info">
+          <h3 class="yo-title">
+            <a href="product-detail.html">CREAMY - Peanut Butter With Dates - Box of - <span class="gram-val">350 g</span></a>
+          </h3>
+          <p class="yo-price"></p><p class="yo-tax"></p>
+        </div>
+        <div class="yo-actions">
+          <div class="yo-split">
+            <select class="pack-select">
+              <option value="350" selected data-img="images/CREAMY_Dates-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option value="950" data-img="images/CREAMY_Dates-removebg-preview.png" data-price="1000">Pack of 950g</option>
+            </select>
+            <button class="yo-cta" type="button">ADD TO CART</button>
+            <div class="yo-qty qty is-single" hidden>
+              <button class="dec" type="button" aria-label="Decrease">−</button>
+              <span class="count">1</span>
+              <button class="inc" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="yo-card" data-sku="creamy-jaggery-350" data-pack="Pack of 6">
+        <div class="yo-arch">
+          <a href="product-detail.html">
+            <img src="images/CREAMY_Jaggery-removebg-preview.png" alt="CREAMY Jaggery">
+          </a>
+        </div>
+        <span class="yo-badge">NEW</span>
+        <div class="yo-info">
+          <h3 class="yo-title">
+            <a href="product-detail.html">CREAMY - Peanut Butter - Box of - <span class="gram-val">350 g</span></a>
+          </h3>
+          <p class="yo-price"></p><p class="yo-tax"></p>
+        </div>
+        <div class="yo-actions">
+          <div class="yo-split">
+            <select class="pack-select">
+              <option value="350" selected data-img="images/CREAMY_Jaggery-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option value="950" data-img="images/CREAMY_Jaggery-removebg-preview.png" data-price="1000">Pack of 950g</option>
+            </select>
+            <button class="yo-cta" type="button">ADD TO CART</button>
+            <div class="yo-qty qty is-single" hidden>
+              <button class="dec" type="button" aria-label="Decrease">−</button>
+              <span class="count">1</span>
+              <button class="inc" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="yo-card" data-sku="creamy-unsweet-350" data-pack="Pack of 6">
+        <div class="yo-arch">
+          <a href="product-detail.html">
+            <img src="images/CREAMY_Unsweetened-removebg-preview.png" alt="CREAMY Unsweetened">
+          </a>
+        </div>
+        <span class="yo-badge">NEW</span>
+        <div class="yo-info">
+          <h3 class="yo-title">
+            <a href="product-detail.html">Unsweetened Peanut Butter - Box of - <span class="gram-val">350 g</span></a>
+          </h3>
+          <p class="yo-price"></p><p class="yo-tax"></p>
+        </div>
+        <div class="yo-actions">
+          <div class="yo-split">
+            <select class="pack-select">
+              <option value="350" selected data-img="images/CREAMY_Unsweetened-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option value="950" data-img="images/CREAMY_Unsweetened-removebg-preview.png" data-price="1000">Pack of 950g</option>
+            </select>
+            <button class="yo-cta" type="button">ADD TO CART</button>
+            <div class="yo-qty qty is-single" hidden>
+              <button class="dec" type="button" aria-label="Decrease">−</button>
+              <span class="count">1</span>
+              <button class="inc" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="yo-card" data-sku="crunchy-dark-350" data-pack="Pack of 6">
+        <div class="yo-arch">
+          <a href="product-detail.html">
+            <img src="images/CRUNCHY_Dark_Chocolate-removebg-preview.png" alt="CRUNCHY Dark Chocolate">
+          </a>
+        </div>
+        <span class="yo-badge">NEW</span>
+        <div class="yo-info">
+          <h3 class="yo-title">
+            <a href="product-detail.html">CRUNCHY - Dark Chocolate Peanut Butter - Box of <span class="gram-val">350 g</span></a>
+          </h3>
+          <p class="yo-price"></p><p class="yo-tax"></p>
+        </div>
+        <div class="yo-actions">
+          <div class="yo-split">
+            <select class="pack-select">
+              <option value="350" selected data-img="images/CRUNCHY_Dark_Chocolate-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option value="950" data-img="images/CRUNCHY_Dark_Chocolate-removebg-preview.png" data-price="1000">Pack of 950g</option>
+            </select>
+            <button class="yo-cta" type="button">ADD TO CART</button>
+            <div class="yo-qty qty is-single" hidden>
+              <button class="dec" type="button" aria-label="Decrease">−</button>
+              <span class="count">1</span>
+              <button class="inc" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 6 -->
+      <article class="yo-card" data-sku="crunchy-dates-350" data-pack="Pack of 6">
+        <div class="yo-arch">
+          <a href="product-detail.html">
+            <img src="images/CRUNCHY_Dates-removebg-preview.png" alt="CRUNCHY Dates">
+          </a>
+        </div>
+        <span class="yo-badge">NEW</span>
+        <div class="yo-info">
+          <h3 class="yo-title">
+            <a href="product-detail.html">CRUNCHY - Peanut Butter With Dates - Box of <span class="gram-val">350 g</span></a>
+          </h3>
+          <p class="yo-price"></p><p class="yo-tax"></p>
+        </div>
+        <div class="yo-actions">
+          <div class="yo-split">
+            <select class="pack-select">
+              <option value="350" selected data-img="images/CRUNCHY_Dates-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option value="950" data-img="images/CRUNCHY_Dates-removebg-preview.png" data-price="1000">Pack of 950g</option>
+            </select>
+            <button class="yo-cta" type="button">ADD TO CART</button>
+            <div class="yo-qty qty is-single" hidden>
+              <button class="dec" type="button" aria-label="Decrease">−</button>
+              <span class="count">1</span>
+              <button class="inc" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 7 -->
+      <article class="yo-card" data-sku="crunchy-jaggery-350" data-pack="Pack of 6">
+        <div class="yo-arch">
+          <a href="product-detail.html">
+            <img src="images/CRUNCHY_Jaggery-removebg-preview.png" alt="CRUNCHY Jaggery">
+          </a>
+        </div>
+        <span class="yo-badge">NEW</span>
+        <div class="yo-info">
+          <h3 class="yo-title">
+            <a href="product-detail.html">CRUNCHY - Jaggery Peanut Butter - Box of <span class="gram-val">350 g</span></a>
+          </h3>
+          <p class="yo-price"></p><p class="yo-tax"></p>
+        </div>
+        <div class="yo-actions">
+          <div class="yo-split">
+            <select class="pack-select">
+              <option value="300" selected data-img="images/CRUNCHY_Jaggery-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option value="950" data-img="images/CRUNCHY_Jaggery-removebg-preview.png" data-price="1000">Pack of 950g</option>
+            </select>
+            <button class="yo-cta" type="button">ADD TO CART</button>
+            <div class="yo-qty qty is-single" hidden>
+              <button class="dec" type="button" aria-label="Decrease">−</button>
+              <span class="count">1</span>
+              <button class="inc" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 8 -->
+      <article class="yo-card" data-sku="crunchy-unsweet-350" data-pack="Pack of 6">
+        <div class="yo-arch">
+          <a href="product-detail.html">
+            <img src="images/CRUNCHY_Unsweetened-removebg-preview.png" alt="CRUNCHY Unsweetened">
+          </a>
+        </div>
+        <span class="yo-badge">NEW</span>
+        <div class="yo-info">
+          <h3 class="yo-title">
+            <a href="product-detail.html">CRUNCHY - Unsweetened Peanut Butter - Box of <span class="gram-val">350 g</span></a>
+          </h3>
+          <p class="yo-price"></p><p class="yo-tax"></p>
+        </div>
+        <div class="yo-actions">
+          <div class="yo-split">
+            <select class="pack-select">
+              <option value="300" selected data-img="images/CRUNCHY_Unsweetened-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option value="950" data-img="images/CRUNCHY_Unsweetened-removebg-preview.png" data-price="1000">Pack of 950g</option>
+            </select>
+            <button class="yo-cta" type="button">ADD TO CART</button>
+            <div class="yo-qty qty is-single" hidden>
+              <button class="dec" type="button" aria-label="Decrease">−</button>
+              <span class="count">1</span>
+              <button class="inc" type="button" aria-label="Increase">+</button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+
+  <section class="yn-love">
+  <h2 class="yn-love__title">You'll definitely love this!</h2>
+
+  <div class="yn-love__grid">
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate1.png" alt="Yo Nutri – Apricot Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate2.png" alt="Yo Nutri – Peanut & Almond Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate3.png" alt="Yo Nutri – Coconut Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate4.png" alt="Yo Nutri – Salted Caramel Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+  </div>
+</section>
+<section class="yn-love">
+  <div class="yn-love__grid">
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate1.png" alt="Yo Nutri – Apricot Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate2.png" alt="Yo Nutri – Peanut & Almond Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate3.png" alt="Yo Nutri – Coconut Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate4.png" alt="Yo Nutri – Salted Caramel Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+  </div>
+</section>
+<section class="yn-love">
+  <div class="yn-love__grid">
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate1.png" alt="Yo Nutri – Apricot Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate2.png" alt="Yo Nutri – Peanut & Almond Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate3.png" alt="Yo Nutri – Coconut Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+    <article class="love-card">
+      <span class="love-badge">UPCOMING</span>
+      <div class="love-arch">
+        <img src="images/chocolate4.png" alt="Yo Nutri – Salted Caramel Bars">
+      </div>
+      <button class="love-btn">Let’s Explore!</button>
+    </article>
+
+  </div>
+</section>
+
+  <section class="flavour-section">
+  <div class="flavour-content">
+    <h2>Simple Ideology. <br><span>Bold Flavours.</span></h2>
+
+    <div class="slider-wrapper" id="flavourSlider">
+      <div class="slider-track">
+        <!-- 1 -->
+        <div class="card">
+          <div class="video-wrapper">
+            <video muted loop preload="none" poster="images/thumb1.jpg" playsinline>
+              <source src="images/19ba4ffb2a464fd198bd2d4d1f880eb2.mp4" type="video/mp4" />
+            </video>
+            <div class="video-text">Influenced by Yoga. <br>Made by Experts.</div>
+          </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="card">
+          <div class="video-wrapper">
+            <video muted loop preload="none" poster="images/thumb1.jpg" playsinline>
+              <source src="images/824cef0fd5f64a97bfd2b3cc9d47ba2a.mp4" type="video/mp4" />
+            </video>
+            <div class="video-text">Did you know maida <br>is also called 'white poison'?</div>
+          </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="card">
+          <div class="video-wrapper">
+            <video muted loop preload="none" poster="images/thumb1.jpg" playsinline>
+              <source src="images/bdf74f33742c4f8c81b8a0536a03e375.mp4" type="video/mp4" />
+            </video>
+            <div class="video-text">Your protein needs <br>depend on your lifestyle.</div>
+          </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="card">
+          <div class="video-wrapper">
+            <video muted loop preload="none" poster="images/thumb1.jpg" playsinline>
+              <source src="images/dfb8c60859194987bb4389334b1ab7eb.mp4" type="video/mp4" />
+            </video>
+            <div class="video-text">Did you know there are <br>two types of sugars?</div>
+          </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="card">
+          <div class="video-wrapper">
+            <video muted loop preload="none" poster="images/thumb1.jpg" playsinline>
+              <source src="images/ef01ce38be5949b4b6dab31c8244ed88.mp4" type="video/mp4" />
+            </video>
+            <div class="video-text">India's Best-Selling Dark Chocolate<br>Muesli, for a reason</div>
+          </div>
+        </div>
+
+        <!-- 6 -->
+        <div class="card">
+          <div class="video-wrapper">
+            <video muted loop preload="none" poster="images/thumb1.jpg" playsinline>
+              <source src="images/another-video.mp4" type="video/mp4" />
+            </video>
+            <div class="video-text">Another great story<br>worth sharing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="slider-controls">
+      <button class="slider-btn left-btn" aria-label="Previous">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+      </button>
+      <button class="slider-btn right-btn" aria-label="Next">
+        <svg viewBox="0 0 24 24"><path d="M8.59 16.59 10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Footer banner -->
+  <section class="footer-banner hero-section">
+    <div class="hero-background">
+      <img src="../new Yo! Nutri/images/footeer7.jpg" alt="Footer Banner Image">
+    </div>
+  </section>
+
+  <!-- Top marquee -->
+  <section class="marquee" id="marquee">
+    <div class="marquee__track" id="track">
+      <div class="marquee__content" id="content">
+        <span>WE BELIEVE IN KEEPING IT SIMPLE</span>
+        <span>WE MAKE HEALTHY EASY</span>
+        <span>ALL ABOARD THE YUM JOURNEY</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="custom-footer">
+    <div class="footer-wrapper">
+      <div class="footer-column logo-column">
+        <div class="logo-circle">
+          <img src="images/WhatsApp Image 2025-08-08 at 9.47.38 AM.jpeg" alt="Yo! Nutri Logo">
+        </div>
+        <p>WE’RE A NUTRITION-LED FOOD COMPANY THAT PRIDES ITSELF IN MAKING TASTY AND SIMPLE FOOD THAT’S GOOD FOR YOU. ALL WITHOUT ANY ARTIFICIAL COLOURS, CHEMICALS OR PRESERVATIVES. WE ONLY USE INGREDIENTS YOU CAN SEE AND TASTE. AND THAT’S WHY WE LET THEM DO THE TALKING.<br>GO ON AND TRY SOME!</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>SHOP</h4>
+        <ul>
+          <li><a href="#">ALL PRODUCTS</a></li>
+          <li><a href="#">NEW LAUNCHES & OFFERS</a></li>
+          <li><a href="#">PROTEIN</a></li>
+          <li><a href="#">BARS</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>QUICK LINKS</h4>
+        <ul>
+          <li><a href="ship.html">SHIPPING & DELIVERY</a></li>
+          <li><a href="terms and conditions.html">TERMS AND CONDITIONS</a></li>
+          <li><a href="privacy.html">PRIVACY POLICY</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>CONTACT US</h4>
+        <p>PH: ‪+919606030616‬</p>
+        <p>AVAILABLE MON TO SAT : 10 AM – 6 PM</p>
+        <p>EMAIL: <a href="mailto:hello@yonutri.in" style="color: aliceblue;">HELLO@YONUTRI.IN</a></p>
+        <p>WE TRY TO REPOND WITHIN 48 HOURS.</p>
+      </div>
+      <div class="footer-column">
+        <h4>OUR STORY</h4>
+        <ul><li><a href="our story.html">WHY WE EXIT?</a></li></ul>
+      </div>
+    </div>
+    <hr><p class="quote">Who needs a magic wand when you've got our protein bars? They'll turn your cravings into happy little lettuce leaves. Poof!</p><hr>
+    <div class="footer-bottom"><p>&copy; 2025 Yo! Nutri.</p></div>
+  </footer>
+
+  <!-- Bottom marquee -->
+  <section class="marquee-alt" id="marqueeAlt">
+    <div class="marquee-alt__track" id="trackAlt">
+      <div class="marquee-alt__content" id="contentAlt">
+        <span>IT’S SIMPLE UNTIL YOU MAKE IT COMPLICATED</span>
+        <span>WE MAKE HEALTHY EASY</span>
+        <span>WE BELIEVE IN KEEPING IT SIMPLE</span>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  /************************
+   * Yo! Nutri – Full JS
+   ************************/
+
+  /* -------- Cart badge -------- */
+  (() => {
+    const cartLink = document.getElementById('cartIcon');
+    if (!cartLink) return;
+    const iconEl = cartLink.querySelector('.header-icon') || cartLink;
+    iconEl.style.position = 'relative';
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .cart-badge{position:absolute;top:-6px;right:-8px;min-width:18px;height:18px;padding:0 5px;border-radius:9999px;display:inline-flex;align-items:center;justify-content:center;background:#0a7f00;color:#fff;font-weight:900;font-size:11px;line-height:18px;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+      .cart-badge[hidden]{display:none !important}
+      @keyframes cb-pop{0%{transform:scale(.6)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+      .cart-badge.pop{animation:cb-pop .28s ease}
+    `;
+    document.head.appendChild(style);
+
+    let badge = document.getElementById('cartBadge');
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.id = 'cartBadge';
+      badge.className = 'cart-badge';
+      badge.hidden = true;
+      badge.textContent = '0';
+      iconEl.appendChild(badge);
+    }
+
+    window.updateCartBadge = function(count){
+      const n = Math.max(0, Number(count) || 0);
+      badge.hidden = n === 0;
+      badge.textContent = n > 99 ? '99+' : String(n);
+      badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
+    };
+
+    window.addEventListener('cart-updated', (e) => {
+      const items = e.detail?.cart || [];
+      const total = items.reduce((s, it) => s + (Number(it.qty) || 0), 0);
+      window.updateCartBadge(total);
+    });
+
+    window.updateCartBadge(0);
+  })();
+
+  /* -------- Simple UI helpers -------- */
+  (() => {
+    const shopLinkTop = document.querySelector('.yonutri-navbar .shop-link');
+    const panel = document.getElementById('shopPanel');
+    shopLinkTop?.addEventListener('click', (e)=>{e.preventDefault(); panel?.classList.toggle('show')});
+    document.addEventListener('click', (e)=>{
+      if (panel && !panel.contains(e.target) && (!shopLinkTop || !shopLinkTop.contains(e.target))) {
+        panel.classList.remove('show');
+      }
+    });
+
+    const searchIcon  = document.querySelector('.search-icon');
+    const searchBar   = document.getElementById('searchBar');
+    const closeSearch = document.getElementById('closeSearch');
+    searchIcon?.addEventListener('click', (e)=>{ e.preventDefault(); searchBar?.classList.add('show'); searchBar?.querySelector('input')?.focus(); });
+    closeSearch?.addEventListener('click', ()=> searchBar?.classList.remove('show'));
+  })();
+
+  /* -------- Cart drawer with coupon engine (PERSISTENT) -------- */
+  (() => {
+    if (window.__yonutriCartInit) return;
+    window.__yonutriCartInit = true;
+
+    const drawer = document.getElementById('cart');
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('closeCart');
+    const cartIcon = document.getElementById('cartIcon');
+    const itemsEl = document.getElementById('cartItems');
+    const titleEl = document.getElementById('cartTitle');
+    const totalEl = document.getElementById('totalRupees');
+
+    if (!drawer || !overlay || !itemsEl || !titleEl || !totalEl) return;
+
+    const INR = n => '₹' + Math.max(0, Math.round(Number(n)||0)).toLocaleString('en-IN');
+
+    /* storage keys */
+    const CART_KEY   = 'yonutri_cart_v1';
+    const COUPON_KEY = 'yonutri_coupon_v1';
+
+    /* cart persistence */
+    const loadCart = () => { try { return new Map(JSON.parse(localStorage.getItem(CART_KEY)||'[]')); } catch { return new Map(); } };
+    const cart = loadCart();
+    const saveCart = () => { try { localStorage.setItem(CART_KEY, JSON.stringify([...cart])); } catch {} };
+
+    /* coupon elements */
+    const bandEl = document.getElementById('couponBand');
+    const appliedRow = document.getElementById('appliedRow');
+    const appliedSavingsEl = document.getElementById('appliedSavings');
+    const applyBtn = document.getElementById('applyCouponBtn');
+    theRemoveBtn = document.getElementById('removeCouponBtn');
+    const removeBtn = theRemoveBtn; /* avoid linter complaint */
+    const couponMainEl = document.getElementById('couponMain');
+
+    function readBandCoupon() {
+      if (!bandEl) return null;
+      const code = (bandEl.dataset.code||'').trim();
+      if (!code) return null;
+      return {
+        code,
+        type: (bandEl.dataset.type||'flat').toLowerCase(),
+        amount: Number(bandEl.dataset.amount||0),
+        min: Number(bandEl.dataset.min||0)
+      };
+    }
+    function getAppliedCoupon(){ try { return JSON.parse(localStorage.getItem(COUPON_KEY)||'null'); } catch { return null; } }
+    function setAppliedCoupon(c){ if (!c) localStorage.removeItem(COUPON_KEY); else localStorage.setItem(COUPON_KEY, JSON.stringify(c)); }
+    function computeDiscount(subtotal, coupon){
+      if (!coupon) return 0;
+      if (subtotal < (coupon.min||0)) return 0;
+      let d = coupon.type === 'percent' ? subtotal * (coupon.amount/100) : coupon.amount;
+      return Math.min(Math.round(d), subtotal);
+    }
+
+    function openCart(){ drawer.classList.add('active'); overlay.classList.add('active'); }
+    function closeCart(){ drawer.classList.remove('active'); overlay.classList.remove('active'); }
+    overlay.addEventListener('click', closeCart);
+    closeBtn?.addEventListener('click', closeCart);
+    cartIcon?.addEventListener('click', e => { e.preventDefault(); openCart(); });
+
+    applyBtn?.addEventListener('click', () => { const c = readBandCoupon(); if (c) { setAppliedCoupon(c); render(); }});
+    removeBtn?.addEventListener('click', () => { setAppliedCoupon(null); render(); });
+
+    function render(){
+      saveCart();
+      itemsEl.innerHTML = '';
+      let count = 0, subtotal = 0;
+
+      for (const p of cart.values()){
+        count += p.qty;
+        subtotal += p.qty * p.price;
+        const variantLabel = /^\d+$/.test(String(p.grams)) ? `${p.grams} g` : String(p.grams);
+        itemsEl.insertAdjacentHTML('beforeend', `
+          <div class="c-row" data-key="${p.key}">
+            <img class="c-thumb" src="${p.img}" alt="">
+            <div class="c-mid">
+              <h3 class="c-title">${p.title}</h3>
+              <div class="c-sub">${variantLabel}</div>
+              <div class="qty ${p.qty===1 ? 'is-single' : ''}">
+                <button class="dec" type="button" aria-label="Decrease">−</button>
+                <span class="count">${p.qty}</span>
+                <button class="inc" type="button" aria-label="Increase">+</button>
+              </div>
+            </div>
+            <div class="c-right">
+              <div class="c-prices"><div class="c-price">${INR(p.price)}</div></div>
+              <button class="c-trash" title="Remove"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `);
+      }
+
+      const applied = getAppliedCoupon();
+      const discount = computeDiscount(subtotal, applied);
+
+      if (bandEl){
+        const bandCoupon = readBandCoupon();
+        if (couponMainEl && bandCoupon){
+          const preview = computeDiscount(subtotal, bandCoupon);
+          couponMainEl.textContent = `Save ${INR(preview)}`;
+        }
+        const bandMin = Number(bandEl.dataset.min||0);
+        bandEl.style.display = (!applied && subtotal >= bandMin) ? 'flex' : 'none';
+      }
+
+      if (appliedRow){
+        if (applied && discount > 0){
+          appliedRow.style.display = 'flex';
+          if (appliedSavingsEl) appliedSavingsEl.textContent = INR(discount);
+        } else {
+          appliedRow.style.display = 'none';
+          if (applied) setAppliedCoupon(null);
+        }
+      }
+
+      titleEl.textContent = `Your cart · ${count} ${count===1?'item':'items'}`;
+      totalEl.textContent = INR(subtotal - discount);
+
+      if (window.updateCartBadge) window.updateCartBadge(count);
+      window.dispatchEvent(new CustomEvent('cart-updated',{detail:{cart:[...cart.values()], subtotal, discount}}));
+    }
+
+    itemsEl.addEventListener('click', e=>{
+      const row = e.target.closest('.c-row'); if(!row) return;
+      const key = row.dataset.key;
+      const it = cart.get(key); if(!it) return;
+
+      if (e.target.classList.contains('inc'))      it.qty += 1;
+      else if (e.target.classList.contains('dec')) it.qty -= 1;
+      else if (e.target.closest('.c-trash'))       it.qty = 0;
+      else return;
+
+      if (it.qty <= 0) cart.delete(key);
+      render();
+    });
+
+    window.addToCart = function(item){
+      const key = (item.sku||'') + '|' + (item.grams||'');
+      const exist = cart.get(key);
+      if (exist) exist.qty += 1;
+      else cart.set(key, { ...item, key, qty: 1 });
+      render(); openCart();
+    };
+    window.changeCartQty = function(key, newQty, itemFactory){
+      if (newQty <= 0) { cart.delete(key); render(); return; }
+      let it = cart.get(key);
+      if (!it) {
+        if (typeof itemFactory === 'function') {
+          it = itemFactory(); if(!it) return;
+          it.key = key; it.qty = 0; cart.set(key, it);
+        } else { return; }
+      }
+      it.qty = newQty; render();
+    };
+    window.getCartQty = function(key){ const it = cart.get(key); return it ? it.qty : 0; };
+
+    window.addEventListener('storage', (e) => {
+      if (e.key === CART_KEY){
+        try { const arr = JSON.parse(e.newValue || '[]'); cart.clear(); arr.forEach(([k,v])=>cart.set(k,v)); } catch {}
+        render();
+      }
+      if (e.key === COUPON_KEY){ render(); }
+    });
+
+    render();
+  })();
+
+  /* -------- Product card binder -------- */
+  (() => {
+    function currentKey(card){
+      const sku   = card.dataset.sku || '';
+      const grams = card.querySelector('.pack-select')?.value || '';
+      return `${sku}|${grams}`;
+    }
+    function buildItem(card){
+      const sel   = card.querySelector('.pack-select');
+      const imgEl = card.querySelector('.yo-arch img');
+      const opt   = sel.options[sel.selectedIndex];
+      return {
+        sku:   card.dataset.sku || '',
+        grams: opt.value,
+        title: card.querySelector('.yo-title').innerText.trim(),
+        price: parseFloat(opt.dataset.price) || 0,
+        img:   opt.dataset.img || imgEl.getAttribute('src')
+      };
+    }
+
+    document.querySelectorAll('.yo-card').forEach(card => {
+      if (card.dataset.bound === '1') return;
+      card.dataset.bound = '1';
+
+      const addBtn = card.querySelector('.yo-cta');
+      const pill   = card.querySelector('.yo-qty');
+      const dec    = pill?.querySelector('.dec');
+      const inc    = pill?.querySelector('.inc');
+      const count  = pill?.querySelector('.count');
+      const select = card.querySelector('.pack-select');
+      if (!addBtn || !pill || !select) return;
+
+      function sync(){
+        const key = currentKey(card);
+        const qty = window.getCartQty ? window.getCartQty(key) : 0;
+        if (qty > 0){
+          count.textContent = String(qty);
+          pill.hidden = false;
+          addBtn.style.display = 'none';
+          pill.classList.toggle('is-single', qty === 1);
+        } else {
+          pill.hidden = true;
+          addBtn.style.display = '';
+        }
+      }
+
+      addBtn.addEventListener('click', () => {
+        window.addToCart && window.addToCart(buildItem(card));
+        sync();
+      });
+      inc?.addEventListener('click', () => {
+        const key = currentKey(card);
+        const cur = window.getCartQty ? window.getCartQty(key) : 0;
+        window.changeCartQty && window.changeCartQty(key, cur + 1, () => buildItem(card));
+        sync();
+      });
+      dec?.addEventListener('click', () => {
+        const key = currentKey(card);
+        const cur = window.getCartQty ? window.getCartQty(key) : 0;
+        window.changeCartQty && window.changeCartQty(key, Math.max(0, cur - 1));
+        sync();
+      });
+
+      select.addEventListener('change', sync);
+      window.addEventListener('cart-updated', sync);
+      sync();
+    });
+  })();
+
+  /* -------- Price/grams text + image swap -------- */
+  (() => {
+    const INR = n => '₹' + Number(n).toLocaleString('en-IN');
+    document.querySelectorAll('.yo-card').forEach(card => {
+      const select  = card.querySelector('.pack-select');
+      const priceEl = card.querySelector('.yo-price');
+      const gramsEl = card.querySelector('.gram-val');
+      const imgEl   = card.querySelector('.yo-arch img');
+      if (!select || !priceEl) return;
+
+      function paint() {
+        const opt   = select.options[select.selectedIndex];
+        const price = parseFloat(opt.dataset.price);
+        const mrp   = parseFloat(opt.dataset.mrp || '');
+
+        if (Number.isFinite(price)) {
+          if (Number.isFinite(mrp) && mrp > price) {
+            priceEl.innerHTML = `<span class="old">${INR(mrp)}</span>${INR(price)}`;
+          } else {
+            priceEl.textContent = INR(price);
+          }
+        } else { priceEl.textContent = ''; }
+
+        if (gramsEl) gramsEl.textContent = /^\d+$/.test(opt.value) ? `${opt.value} g` : opt.value;
+
+        if (imgEl && opt.dataset.img) {
+          const nextSrc = opt.dataset.img;
+          if (imgEl.getAttribute('src') !== nextSrc) {
+            imgEl.classList.remove('slide-in','slide-out');
+            imgEl.classList.add('slide-out');
+            imgEl.addEventListener('animationend', function handler() {
+              imgEl.removeEventListener('animationend', handler);
+              imgEl.src = nextSrc;
+              imgEl.classList.remove('slide-out');
+              imgEl.classList.add('slide-in');
+            }, { once: true });
+          }
+        }
+      }
+
+      select.addEventListener('change', paint);
+      paint();
+    });
+  })();
+
+  /* -------- Special Offers shelf -------- */
+  (() => {
+    const list = document.getElementById('offerList');
+    if (!list) return;
+    const INR = n => '₹' + Number(n).toLocaleString('en-IN');
+
+    const OFFERS = [
+      { sku:'minis4g', title:'Protein Minis, 4g Choco…', img:'images/original.jpg', mrp:480, price:432,   grams:'Offer' },
+      { sku:'powerup', title:'Power Up Choco Peanut…',   img:'images/original.jpg', mrp:399, price:359.1, grams:'Offer' },
+    ];
+
+    const keyOf = o => `${o.sku}|${o.grams||''}`;
+    const qtyOf = o => (window.getCartQty ? window.getCartQty(keyOf(o)) : 0);
+
+    const cardHTML = (o) => {
+      const q = qtyOf(o);
+      return `
+        <div class="offer-card" data-sku="${o.sku}">
+          <img class="offer-thumb" src="${o.img}" alt="">
+          <div class="offer-title">${o.title}</div>
+          <div class="offer-price">
+            ${o.mrp ? `<span class="offer-old">${INR(o.mrp)}</span>` : ``}
+            <span>${INR(o.price)}</span>
+          </div>
+          ${
+            q > 0
+            ? `<div class="offer-qty">
+                 <button class="dec" type="button">−</button>
+                 <span class="count">${q}</span>
+                 <button class="inc" type="button">+</button>
+               </div>`
+            : `<button class="offer-cta" type="button">+ ADD</button>`
+          }
+        </div>
+      `;
+    };
+
+    const render = () => { list.innerHTML = OFFERS.map(cardHTML).join(''); };
+
+    list.addEventListener('click', e => {
+      const card  = e.target.closest('.offer-card'); if (!card) return;
+      const offer = OFFERS.find(o => o.sku === card.dataset.sku); if (!offer) return;
+      const key   = keyOf(offer);
+      const cur   = qtyOf(offer);
+
+      if (e.target.classList.contains('offer-cta')) {
+        window.addToCart && window.addToCart({
+          sku: offer.sku, grams: offer.grams || 'Special Offer',
+          title: offer.title, price: offer.price, img: offer.img
+        });
+      } else if (e.target.classList.contains('inc')) {
+        window.changeCartQty && window.changeCartQty(key, cur + 1, () => ({
+          sku: offer.sku, grams: offer.grams || 'Special Offer',
+          title: offer.title, price: offer.price, img: offer.img
+        }));
+      } else if (e.target.classList.contains('dec')) {
+        window.changeCartQty && window.changeCartQty(key, cur - 1);
+      }
+
+      render();
+    });
+
+    window.addEventListener('cart-updated', render);
+    render();
+  })();
+
+  /* -------------------- Marquee (top) -------------------- */
+  (() => {
+      const container = document.getElementById('marquee');
+      const track     = document.getElementById('track');
+      const content   = document.getElementById('content');
+      if(!container || !track || !content) return;
+
+      function setup(){
+        // keep only the first block, then clone until we overflow enough
+        [...track.children].forEach((el,i)=>{ if(i) el.remove(); });
+        const blockWidth = content.scrollWidth;
+        let totalWidth = blockWidth;
+        const needWidth = container.clientWidth * 2 + blockWidth;
+        while(totalWidth < needWidth){
+          track.appendChild(content.cloneNode(true));
+          totalWidth += blockWidth;
+        }
+        track.style.setProperty('--shift', blockWidth + 'px');
+        const styles = getComputedStyle(document.documentElement);
+        const pxPerSec = parseFloat(styles.getPropertyValue('--px-per-sec')) || 120;
+        const seconds = Math.max(6, blockWidth / pxPerSec);
+        track.style.setProperty('--duration', seconds + 's');
+      }
+
+      const init = ()=>setup();
+      if (document.fonts?.ready) document.fonts.ready.then(init);
+      init();
+      window.addEventListener('resize', setup);
+    })();
+
+  /* -------------------- Marquee (bottom) -------------------- */
+   (() => {
+      const container = document.getElementById('marqueeAlt');
+      const track     = document.getElementById('trackAlt');
+      const content   = document.getElementById('contentAlt');
+      if (!container || !track || !content) return;
+
+      function setup(){
+        // keep only the first content block
+        [...track.children].forEach((el,i)=>{ if(i) el.remove(); });
+
+        // measure one block and clone until width is covered
+        const blockWidth = content.scrollWidth;
+        let totalWidth = blockWidth;
+        while (totalWidth < container.clientWidth + blockWidth * 2) {
+          track.appendChild(content.cloneNode(true));
+          totalWidth += blockWidth;
+        }
+
+        // set animation shift equal to one block
+        track.style.setProperty('--shift', blockWidth + 'px');
+
+        // compute duration from pixels-per-second
+        const styles = getComputedStyle(document.documentElement);
+        const pps = parseFloat(styles.getPropertyValue('--px-per-sec')) || 120;
+        const seconds = Math.max(6, blockWidth / pps);
+        track.style.setProperty('--duration', seconds + 's');
+      }
+
+      const init = ()=>setup();
+      if (document.fonts?.ready) document.fonts.ready.then(init);
+      init();
+      window.addEventListener('resize', setup);
+    })();
+  /* -------------------- Navbar hide-on-scroll -------------------- */
+  (() => {
+    const navbar = document.querySelector('.yonutri-navbar');
+    if (!navbar) return;
+    let last = window.scrollY;
+    window.addEventListener('scroll', ()=>{
+      const y = window.scrollY;
+      if (y > last) navbar.classList.add('hidden');
+      else navbar.classList.remove('hidden');
+      last = y;
+    });
+  })();
+  </script>
+  <script>
+/* -------- Card → PDP handoff (sku, grams, price, img, title) -------- */
+(() => {
+  document.querySelectorAll('.yo-card').forEach(card => {
+    // Clicks from the image or title go to PDP with params
+    const links = card.querySelectorAll('.yo-arch a, .yo-title a');
+    const imgEl = card.querySelector('.yo-arch img');
+    const select = card.querySelector('.pack-select');
+    const titleEl = card.querySelector('.yo-title');
+
+    links.forEach(a => {
+      a.addEventListener('click', (e) => {
+        // allow normal open in new tab (cmd/ctrl click)
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
+        e.preventDefault();
+
+        const opt = select?.options[select.selectedIndex];
+        const grams = opt?.value || '';
+        const price = opt?.dataset.price || '';
+        const img   = opt?.dataset.img || imgEl?.getAttribute('src') || '';
+        const sku   = card.dataset.sku || '';
+        const title = titleEl?.innerText?.trim() || '';
+
+        // default PDP if href missing
+        const href = a.getAttribute('href') || 'product-detail.html';
+
+        const params = new URLSearchParams({
+          sku, grams, price, img, title
+        });
+
+        // Navigate with query params
+        location.href = href + (href.includes('?') ? '&' : '?') + params.toString();
+      });
+    });
+  });
+})();
+</script>
+<!--testimoials-->
+<script>
+(() => {
+  const wrapper  = document.getElementById('flavourSlider');
+  const track    = wrapper.querySelector('.slider-track');
+  const cards    = Array.from(track.querySelectorAll('.card'));
+  const leftBtn  = document.querySelector('.left-btn');
+  const rightBtn = document.querySelector('.right-btn');
+
+  function getGap(){
+    const g = getComputedStyle(wrapper).getPropertyValue('--gap').trim();
+    return parseFloat(g || '20') || 20;
+  }
+  function visibleCount(){
+    const v = getComputedStyle(wrapper).getPropertyValue('--visible').trim();
+    return Math.max(1, parseInt(v || '4', 10));
+  }
+  function cardStep(){
+    // one step = card width + gap (except after last visible, but good enough)
+    return (cards[0]?.offsetWidth || 0) + getGap();
+  }
+
+  let index = 0;
+
+  function updateButtons(){
+    const maxIndex = Math.max(0, cards.length - visibleCount());
+    leftBtn.disabled  = index <= 0;
+    rightBtn.disabled = index >= maxIndex;
+  }
+
+  function update(){
+    const offset = index * cardStep();
+    track.style.transform = `translateX(-${offset}px)`;
+    updateButtons();
+  }
+
+  rightBtn.addEventListener('click', () => {
+    const max = Math.max(0, cards.length - visibleCount());
+    if (index < max) { index++; update(); }
+  });
+
+  leftBtn.addEventListener('click', () => {
+    if (index > 0) { index--; update(); }
+  });
+
+  window.addEventListener('resize', () => {
+    const max = Math.max(0, cards.length - visibleCount());
+    if (index > max) index = max;
+    update();
+  });
+
+  // Hover play/pause
+  track.querySelectorAll('video').forEach(video => {
+    video.addEventListener('mouseenter', () => video.play());
+    video.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
