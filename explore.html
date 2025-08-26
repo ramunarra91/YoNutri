@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yo Nutri! – Product Detail</title>
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{ --border:#e9e9e9; --green:#138a00; --brand:#3e2723; --cta:#ffb300; }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:#3c2821;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+
+    /* Header */
+    .yonutri-navbar{position:sticky;top:0;z-index:999;background:#3c2821;box-shadow:0 2px 8px rgba(0,0,0,.12);height:105px}
+    .yonutri-navbar .navbar-top{max-width:1500px;margin:auto;padding:1rem 2rem;display:flex;justify-content:space-between;align-items:center}
+    .nav-left .shop-link,.nav-right a{color:#fff;text-decoration:none;font-size:1.1rem}
+    .nav-right{display:flex;gap:1.4rem;align-items:center}
+    .nav-logo{width:80px;height:80px;border-radius:50%;object-fit:cover}
+    .search-bar{position:fixed;top:-105px;left:0;width:100%;height:105px;background:#fff;padding:20px;display:flex;justify-content:center;align-items:center;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:top .4s ease;z-index:2000}
+    .search-bar.show{top:0}
+    .search-bar input{width:50%;padding:10px;border:1px solid #000;font-size:16px}
+    .close-search{font-size:24px;cursor:pointer;margin-left:15px}
+    .yonutri-navbar.hidden { transform: translateY(-100%); }
+
+    /* Shop panel */
+    .shop-panel{position:absolute;top:105px;left:0;width:100%;background:#4b0082;color:#fff;overflow:hidden;max-height:0;transition:max-height .4s ease;z-index:1000}
+    .shop-panel.show{max-height:500px}
+    .shop-panel-content{display:flex;max-width:1200px;margin:0 auto;align-items:flex-start}
+    a.shop-link{display:block;color:inherit;text-decoration:none}
+    .shop-sidebar{width:400px;padding:10px 20px;background:#173215;position:relative;flex-shrink:0}
+    .shop-sidebar h5{font-size:1rem;color:#eee;padding-left:20px}
+    .category-grid{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:20px}
+    .category-item{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;background:#f7f7f7;border-radius:15px;color:#3e2723}
+    .category-item span{font-weight:700;width:100px}
+    .category-item img{width:100px;height:100px;object-fit:contain}
+
+    /* Drawer */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:.25s;z-index:1001}
+    .overlay.active{opacity:1;pointer-events:auto}
+    .cart{position:fixed;top:0;right:0;bottom:0;width:392px;max-width:88vw;background:#fff;transform:translateX(110%);transition:.3s ease;z-index:1002;display:grid;grid-template-rows:auto 1fr auto;border-left:1px solid var(--border);color:#1c1c1c}
+    .cart.active{transform:translateX(0)}
+    .cart-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border)}
+    .cart-title{display:flex;align-items:center;gap:10px;font-weight:800;font-size:16px}
+    .cart-close{cursor:pointer;font-size:18px;color:#222}
+    .cart-bd{padding:14px 14px 0;overflow:auto;scrollbar-width:none;-ms-overflow-style:none}
+    .cart-bd::-webkit-scrollbar{width:0;height:0}
+    .c-items{display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
+    .c-row{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:start;background:#fff;border:1px solid #ededed;border-radius:16px;padding:12px;box-shadow:0 1px 0 rgba(0,0,0,.03) inset}
+    .c-thumb{width:64px;height:64px;object-fit:contain;background:#FFB347;border-radius:12px}
+    .c-title{font-weight:800;font-size:14px;line-height:1.3;margin:0;max-width:220px}
+    .c-sub{font-size:12px;color:#6f6f6f;margin:4px 0 8px}
+    .c-right{display:flex;align-items:center;gap:10px}
+    .c-prices{display:flex;flex-direction:column;align-items:flex-end;min-width:72px}
+    .c-price{font-weight:900;font-size:14px}
+    .c-trash{border:0;background:transparent;color:#b5b5b5;width:30px;height:30px;border-radius:8px;cursor:pointer}
+    .c-trash:hover{color:#222}
+    .qty{display:flex;align-items:center;border:1.5px solid #121212;border-radius:9999px;padding:4px;background:#fff;height:40px}
+    .qty .dec,.qty .inc{border:0;cursor:pointer;height:32px;min-width:40px;border-radius:10px;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center}
+    .qty .dec{background:#e9e9e9;color:#222}
+    .qty .inc{background:#3e2723;color:#fff}
+    .qty.is-single .dec{background:#efefef;color:#9a9a9a}
+    .qty .count{width:33px;text-align:center;font-weight:700;font-size:14px}
+
+    /* Drawer sections */
+    .cart-section{border-top:1px solid var(--border);margin:14px -14px 0;padding:10px 14px}
+    .sec-title{font-weight:800;font-size:14px;margin:0 0 12px}
+
+    /* Offers & Rewards band */
+    .coupon-band{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #e7efe7;border-radius:14px;padding:14px 16px;background:#fff}
+    .coupon-left{display:flex;align-items:center;gap:10px}
+    .coupon-left .icon{width:22px;height:22px;display:grid;place-items:center;border-radius:9999px;background:#e9f7ea;color:var(--green)}
+    .coupon-text{display:flex;flex-direction:column;line-height:1.2}
+    .coupon-main{font-weight:800;color:var(--green);font-size:14px}
+    .coupon-sub{font-size:12px;color:#666}
+    .coupon-apply{padding:6px 12px;border:1px solid #cfd8cf;border-radius:12px;background:#fff;font-weight:800;font-size:12px;cursor:pointer}
+    .applied-row{display:flex;align-items:center;gap:8px;color:#0a7f00;font-weight:700;font-size:13px;margin-top:10px}
+    .applied-row i{color:#0a7f00}
+
+    /* Special Offers shelf */
+    .offers-wrap{border:1px solid var(--border);border-radius:14px;padding:12px;background:#fff}
+    .offers-head{font-weight:800;color:#118600;margin:0 0 10px}
+    .offer-list{display:flex;gap:12px;overflow:auto;padding-bottom:6px;scroll-snap-type:x mandatory}
+    .offer-card{flex:0 0 150px;border:1px solid #e9e9e9;border-radius:14px;padding:10px;background:#fff;display:flex;flex-direction:column;gap:8px;scroll-snap-align:start}
+    .offer-thumb{width:100%;height:76px;object-fit:cover;background:#f7f7f7;border-radius:10px}
+    .offer-title{font-size:12px;font-weight:800;line-height:1.2;min-height:32px;color:#222}
+    .offer-price{display:flex;align-items:center;justify-content:space-between;font-size:12px}
+    .offer-old{text-decoration:line-through;color:#777}
+    .offer-cta,.offer-qty{height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;cursor:pointer}
+    .offer-cta{border:1px solid #2b8a00;background:#fff}
+    .offer-qty{border:1.5px solid #121212;gap:6px;padding:0 4px}
+    .offer-qty .dec,.offer-qty .inc{height:26px;min-width:28px;border:0;border-radius:8px;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .offer-qty .dec{background:#e9e9e9}
+    .offer-qty .inc{background:#16271b;color:#fff}
+    .offer-qty .count{min-width:20px;text-align:center;font-weight:800}
+
+    .cart-ft{border-top:1px solid var(--border);background:#fff;padding:12px 14px;display:grid;gap:10px}
+    .total-line{display:flex;align-items:center;justify-content:space-between}
+    .checkout{width:100%;background:#FFA500;color:#fff;border:none;border-radius:9999px;padding:12px 16px;font-weight:900;cursor:pointer}
+    .secured{text-align:center;font-size:11px;color:#666}
+
+    /* PDP layout */
+    .container{
+      max-width:1200px;
+      margin-left:0;
+      margin-right:auto;
+      padding:20px;
+      padding-right:clamp(140px,18vw,420px);
+      display:flex;
+      gap:30px;
+    }
+    .left-section{display:flex;align-items:flex-start;gap:15px}
+    .image-gallery{position:relative}
+    .main-image {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      overflow: hidden;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .main-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
+    #product-image { width: auto; height: auto; max-width: 100%; max-height: 100%; }
+
+    .zoom-icon{position:absolute;top:10px;left:10px;background:#fff;border-radius:50%;padding:8px;cursor:pointer;z-index:2;color:#3c2821}
+    .slider-dots{text-align:center;margin-top:10px}
+    .dot{height:10px;width:10px;margin:5px;background:#bbb;border-radius:50%;display:inline-block;cursor:pointer}
+    .dot.active{background:#555}
+
+    /* Icon column */
+    .icon-column{display:flex;flex-direction:column;gap:18px;height:500px;align-items:center}
+    .icon-box{
+      background:#f4dec4;color:#3c2821;border-radius:8px;
+      height:150px;width:180px;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-align:center;padding:10px;
+    }
+    .icon-box i{font-size:56px;line-height:1;display:block;margin-bottom:10px;}
+    .icon-box p{margin:6px 0 0;line-height:1.2;font-size:14px;text-align:center;}
+
+    .right-section{flex:1;min-width:600px}
+    .breadcrumb{font-size:14px;margin-bottom:10px;text-decoration:underline}
+    .breadcrumb a{color:#fff;text-decoration:none}
+    .product-title{font-size:34px;font-weight:900;margin-bottom:15px}
+    .price-section{display:flex;align-items:baseline;gap:10px}
+    .current-price{font-size:34px;font-weight:900}
+    .features{list-style:disc;margin:14px 0 0 22px}
+    .offer-box{border:2px solid #ffb300;padding:10px;margin:20px 0;background:#3c2821;border-radius:6px;display:flex;gap:10px}
+    .offer-icon{font-size:34px;color:#ffb300;margin:4px 10px 0}
+    .purchase-section{display:flex;align-items:center;gap:10px}
+
+    /* Qty=0 neutral */
+    .quantity-selector{display:flex;align-items:center;border:1px solid #e0e0e0;border-radius:20px;overflow:hidden;background:#fff}
+    .qty-btn{width:45px;height:40px;border:none;cursor:pointer;font-size:18px;background:#e9e9e9;color:#333}
+    #quantity{width:48px;text-align:center;border:none;font-size:16px;outline:none;background:#fff;color:#333}
+    .quantity-selector.is-zero .qty-btn{background:#ededed;color:#666}
+    .quantity-selector.is-zero #quantity{color:#666}
+    .add-to-cart{padding:10px 20px;background:var(--cta);border:none;cursor:pointer;font-weight:900;border-radius:20px;min-width:320px;color:#3e2723}
+
+    /* ---------- FBT ---------- */
+    .fbt{margin-top:2rem}
+    .fbt .frequently-heading{display:flex;align-items:center;gap:10px;color:#fff;margin-bottom:10px;font-weight:800}
+    .fbt-box{
+      background:#fff;color:#1c1c1c;border-radius:12px;border:1px solid #ececec;
+      padding:14px 14px 0; box-shadow:0 1px 3px rgba(0,0,0,.06); overflow:hidden;
+    }
+    .fbt-body{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:stretch}
+    .fbt-plus{
+      display:grid;place-items:center;width:44px;height:44px;align-self:center;
+      border:2px dashed #e3e3e3;border-radius:10px;font-weight:900;color:#3e2723;
+    }
+    .fbt-item{
+      position:relative;background:#fff;border:1px solid #ededed;border-radius:12px;
+      padding:14px;display:flex;flex-direction:column;align-items:center;text-align:center;
+    }
+    .fbt-img{width:140px;height:140px;border-radius:10px;background:#f7f7f7;display:flex;align-items:center;justify-content:center;overflow:hidden;margin:6px 0 10px}
+    .fbt-img img{max-width:100%;max-height:100%;object-fit:contain}
+    .fbt-check{
+      position:absolute;top:10px;left:10px;appearance:none;width:18px;height:18px;cursor:pointer;
+      border:2px solid var(--brand);border-radius:4px;background:#fff;display:inline-block;
+    }
+    .fbt-check:checked{background:var(--brand);box-shadow:inset 0 0 0 4px #fff}
+    .fbt-title{margin:0 0 8px;font-weight:800;font-size:14px;color:#222;line-height:1.25}
+    .fbt-price{font-weight:900;color:#222}
+    .fbt-old{margin-left:8px;text-decoration:line-through;color:#888;font-weight:600;font-size:12px}
+    .fbt-cta{
+      display:block;
+      margin:14px -14px 0;
+      width:120%;
+      padding:12px 14px;
+      background:var(--cta);
+      color:#3e2723;
+      font-weight:900;
+      border:0;
+      border-radius:0 0 12px 12px;
+      cursor:pointer;
+    }
+
+    /* Marquee basics */
+    :root{ --px-per-sec:120; --duration:16s; --shift:0px; }
+    .marquee-alt{background:#3e2723;overflow:hidden;width:100%;padding:1rem 0}
+    .marquee-alt__track{display:flex;will-change:transform;animation:scroll var(--duration) linear infinite}
+    .marquee-alt__content{display:flex;color:#fff;font-weight:800;font-size:1.1rem;gap:2rem;white-space:nowrap}
+    @keyframes scroll{from{transform:translateX(0)} to{transform:translateX(calc(-1*var(--shift)))}}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="yonutri-navbar">
+    <div class="navbar-top">
+      <div class="nav-left"><a href="#" class="shop-link"><i class="fas fa-arrow-up-right-from-square"></i> SHOP</a></div>
+      <div class="nav-center"><a href="index.html" class="logo-link"><img src="images/WhatsApp Image 2025-08-08 at 9.47.38 AM.jpeg" alt="Yo Nutri Logo" class="nav-logo" /></a></div>
+      <div class="nav-right">
+        <a href="#" class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></a>
+        <a href="login.html"><i class="fa-solid fa-user"></i></a>
+        <a href="#" id="cartIcon">CART <i class="header-icon fa-solid fa-cart-shopping"></i></a>
+      </div>
+      <div class="search-bar" id="searchBar"><input type="text" placeholder="Search" /><span class="close-search" id="closeSearch">&times;</span></div>
+    </div>
+  </header>
+
+  <!-- Shop panel -->
+  <div class="shop-panel" id="shopPanel">
+    <div class="shop-panel-content">
+      <a class="shop-link" href="#"><div class="shop-sidebar"><h5>SHOP BY CATEGORY</h5></div></a>
+      <div class="category-grid">
+        <a href="#" class="shop-link"><div class="category-item"><span>New Launches & Offers</span><img src="images/Photo1 (1).jpeg" alt=""></div></a>
+        <a href="#" class="shop-link"><div class="category-item"><span>All Products</span><img src="images/Photo1 (2).jpeg" alt=""></div></a>
+        <a href="#" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/Photo1 (3).jpeg" alt=""></div></a>
+        <a href="#" class="shop-link"><div class="category-item"><span>Bars</span><img src="images/Photo1 (4).jpeg" alt=""></div></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart drawer -->
+  <aside class="cart" id="cart">
+    <div class="cart-hd">
+      <div class="cart-title"><i class="fa-solid fa-cart-shopping"></i><span id="cartTitle">Your cart · 0 item</span></div>
+      <i class="fa-solid fa-xmark cart-close" id="closeCart" title="Close"></i>
+    </div>
+
+    <div class="cart-bd">
+      <div class="c-items" id="cartItems"></div>
+
+      <div class="cart-section">
+        <div class="sec-title">Offers & Rewards</div>
+
+        <div id="couponBand" class="coupon-band"
+             data-code="YONUTRI100" data-type="flat" data-amount="100" data-min="999" style="display:none">
+          <div class="coupon-left">
+            <div class="icon"><i class="fa-solid fa-badge-percent"></i></div>
+            <div class="coupon-text">
+              <span id="couponMain" class="coupon-main">Save ₹0</span>
+              <span class="coupon-sub">with '<b>YONUTRI100</b>'</span>
+              <span class="coupon-sub">Orders over ₹999</span>
+            </div>
+          </div>
+          <button id="applyCouponBtn" class="coupon-apply" type="button">Apply</button>
+        </div>
+
+        <div id="appliedRow" class="applied-row" style="display:none">
+          <i class="fa-regular fa-circle-check"></i>
+          <span><span id="appliedSavings">₹0</span> total savings · 1 applied</span>
+          <button id="removeCouponBtn" class="coupon-apply" type="button">Remove</button>
+        </div>
+      </div>
+
+      <div class="cart-section">
+        <div class="offers-wrap">
+          <div class="offers-head">Special Offers For You</div>
+          <div class="offer-list" id="offerList"></div>
+        </div>
+
+        <label class="applied-row" style="margin-top:10px;color:#444;font-weight:600">
+          <input type="checkbox" checked style="accent-color:#0a7f00;margin-right:8px"> Keep me posted about sales and offers
+        </label>
+      </div>
+    </div>
+
+    <div class="cart-ft">
+      <div class="total-line">
+        <div class="total-left">
+          <strong id="totalRupees">₹0</strong>
+          <small>Estimated total</small>
+        </div>
+      </div>
+      <button id="checkoutBtn" class="checkout" type="button">Checkout</button>
+      <div class="secured">🔒 Secured by <b>shopflo</b></div>
+    </div>
+  </aside>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- PRODUCT DETAIL -->
+  <div class="container" id="pdp" data-sku="dc-peanut-350" data-grams="350 g" data-price="649">
+    <div class="left-section">
+      <div class="image-gallery">
+        <div class="main-image">
+          <img src="images/image.png" alt="Product" id="product-image">
+          <div class="zoom-icon" title="Zoom In">&#128269;</div>
+        </div>
+        <div class="slider-dots" id="sliderDots"></div>
+      </div>
+
+      <!-- ICONS -->
+      <div class="icon-column">
+        <div class="icon-box"><i class="fa-solid fa-weight-hanging"></i><p>30g protein per scoop</p></div>
+        <div class="icon-box"><i class="fa-solid fa-cubes-stacked"></i><p>Cleanest Protein Source</p></div>
+        <div class="icon-box"><i class="fa-solid fa-seedling"></i><p>Enhanced With Probiotics</p></div>
+      </div>
+    </div>
+
+    <div class="right-section">
+      <nav class="breadcrumb"><a href="index.html">Home</a> / <a href="#">Whey Protein</a> / <span>Dark Chocolate Peanut Butter</span></nav>
+
+      <h1 class="product-title" id="pdpTitle">Chocolate NUTBARS  - Box of 350 g</h1>
+
+      <!-- <div class="price-section">
+        <h1 class="current-price">MRP: ₹<span id="pdpPrice">649</span></h1>
+      </div> -->
+
+      <div style="margin:10px 0 6px 0">
+        <span style="border:2px solid #fff;padding:2px 6px;border-radius:4px;color:gold">★★★★★</span> 5/5 (645 reviews)
+      </div>
+      <div><em>10-yr old brand. 1 lakh 5-stars on </em><a href="#"><i class="fa-brands fa-amazon" style="color:#fff"></i></a></div>
+
+      <ul class="features">
+        <li>No Added Sugar</li>
+        <li>No Added Flavors</li>
+        <li>Clinically tested & patented enzyme</li>
+        <li>Ultra and micro filtration</li>
+      </ul>
+
+      <div class="offer-box">
+        <span class="offer-icon"><i class="fa-solid fa-percent"></i></span>
+        <div class="offer-text">
+          <strong>Flat ₹100 OFF + FREE Gift</strong>
+          <p>₹100 OFF on orders over ₹999. FREE surprise gift on orders over ₹999. No code needed.</p>
+        </div>
+      </div>
+
+      <!-- Qty & Add (kept commented as in your file)
+      <div class="purchase-section">
+        <div class="quantity-selector is-zero" id="pdpQtyWrap">
+          <button class="qty-btn" id="minus">−</button>
+          <input type="text" value="0" id="quantity" inputmode="numeric" pattern="\d*">
+          <button class="qty-btn" id="plus">+</button>
+        </div>
+        <button class="add-to-cart" id="pdpAdd">Add to cart</button>
+      </div> -->
+
+      <!-- FBT -->
+      <section class="fbt" id="fbt">
+        <div class="frequently-heading">
+          <i class="fa-solid fa-cart-shopping" style="color:#fff"></i>
+          <span>FREQUENTLY BOUGHT TOGETHER</span>
+        </div>
+
+        <div class="fbt-box">
+          <div class="fbt-body">
+            <div class="fbt-item" data-sku="fbt-1">
+              <input class="fbt-check" type="checkbox" checked>
+              <div class="fbt-img">
+                <img src="images/chocolate1.png" alt="Product 1">
+              </div>
+              <p class="fbt-title">Power Up Choco Peanut Butter 20g Protein Bars - Pack of 5</p>
+              <div class="fbt-price">Rs. 399 <span class="fbt-old">Rs. 700</span></div>
+            </div>
+
+            <div class="fbt-plus">+</div>
+
+            <div class="fbt-item" data-sku="fbt-2">
+              <input class="fbt-check" type="checkbox" checked>
+              <div class="fbt-img">
+                <img src="images/chocolate2.png" alt="Product 2">
+              </div>
+              <p class="fbt-title">Protein Minis, 4g Choco Peanut Butter Protein Bar - Pack of 24</p>
+              <div class="fbt-price">Rs. 480 <span class="fbt-old">Rs. 480</span></div>
+            </div>
+          </div>
+
+          <button class="fbt-cta" id="addSelectedFbt">Add Selected Items to Cart</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Top marquee -->
+  <section class="marquee" id="marquee">
+    <div class="marquee__track" id="track">
+      <div class="marquee__content" id="content">
+        <span>WE BELIEVE IN KEEPING IT SIMPLE</span>
+        <span>WE MAKE HEALTHY EASY</span>
+        <span>ALL ABOARD THE YUM JOURNEY</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="custom-footer">
+    <div class="footer-wrapper">
+      <div class="footer-column logo-column">
+        <div class="logo-circle">
+          <img src="images/WhatsApp Image 2025-08-08 at 9.47.38 AM.jpeg" alt="Yo! Nutri Logo">
+        </div>
+        <p>WE’RE A NUTRITION-LED FOOD COMPANY THAT PRIDES ITSELF IN MAKING TASTY AND SIMPLE FOOD THAT’S GOOD FOR YOU. ALL WITHOUT ANY ARTIFICIAL COLOURS, CHEMICALS OR PRESERVATIVES. WE ONLY USE INGREDIENTS YOU CAN SEE AND TASTE. AND THAT’S WHY WE LET THEM DO THE TALKING.<br>GO ON AND TRY SOME!</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h4>SHOP</h4>
+        <ul>
+          <li><a href="#">ALL PRODUCTS</a></li>
+          <li><a href="#">NEW LAUNCHES & OFFERS</a></li>
+          <li><a href="#">PROTEIN</a></li>
+          <li><a href="#">BARS</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>QUICK LINKS</h4>
+        <ul>
+          <li><a href="ship.html">SHIPPING & DELIVERY</a></li>
+          <li><a href="terms and conditions.html">TERMS AND CONDITIONS</a></li>
+          <li><a href="privacy.html">PRIVACY POLICY</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h4>CONTACT US</h4>
+        <p>PH: ‪+919606030616‬</p>
+        <p>AVAILABLE MON TO SAT : 10 AM – 6 PM</p>
+        <p>EMAIL: <a href="mailto:hello@yonutri.in" style="color: aliceblue;">HELLO@YONUTRI.IN</a></p>
+        <p>WE TRY TO REPOND WITHIN 48 HOURS.</p>
+      </div>
+      <div class="footer-column">
+        <h4>OUR STORY</h4>
+        <ul><li><a href="our story.html">WHY WE EXIT?</a></li></ul>
+      </div>
+    </div>
+    <hr><p class="quote">Who needs a magic wand when you've got our protein bars? They'll turn your cravings into happy little lettuce leaves. Poof!</p><hr>
+    <div class="footer-bottom"><p>&copy; 2025 Yo! Nutri.</p></div>
+  </footer>
+
+  <!-- Bottom marquee -->
+  <section class="marquee-alt" id="marqueeAlt">
+    <div class="marquee-alt__track" id="trackAlt">
+      <div class="marquee-alt__content" id="contentAlt">
+        <span>IT’S SIMPLE UNTIL YOU MAKE IT COMPLICATED •&nbsp;</span>
+        <span>WE MAKE HEALTHY EASY •&nbsp;</span>
+        <span>WE LET OUR INGREDIENTS DO THE TALKING! •&nbsp;</span>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  /* Cart badge */
+  (() => {
+    const cartLink = document.getElementById('cartIcon');
+    if (!cartLink) return;
+    const iconEl = cartLink.querySelector('.header-icon') || cartLink;
+    iconEl.style.position='relative';
+    const style=document.createElement('style');
+    style.textContent=`
+      .cart-badge{position:absolute;top:-6px;right:-8px;min-width:18px;height:18px;padding:0 5px;border-radius:9999px;display:inline-flex;align-items:center;justify-content:center;background:#0a7f00;color:#fff;font-weight:900;font-size:11px;line-height:18px;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+      .cart-badge[hidden]{display:none!important}
+      @keyframes cb-pop{0%{transform:scale(.6)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+      .cart-badge.pop{animation:cb-pop .28s ease}
+    `;
+    document.head.appendChild(style);
+    let badge=document.getElementById('cartBadge');
+    if(!badge){badge=document.createElement('span');badge.id='cartBadge';badge.className='cart-badge';badge.hidden=true;badge.textContent='0';iconEl.appendChild(badge);}
+    window.updateCartBadge=function(count){
+      const n=Math.max(0,Number(count)||0);
+      badge.hidden=n===0; badge.textContent=n>99?'99+':String(n);
+      badge.classList.remove('pop'); void badge.offsetWidth; badge.classList.add('pop');
+    };
+    window.addEventListener('cart-updated',(e)=>{
+      const items=e.detail?.cart||[];
+      const total=items.reduce((s,it)=>s+(Number(it.qty)||0),0);
+      window.updateCartBadge(total);
+    });
+    window.updateCartBadge(0);
+  })();
+
+  /* Shop + Search */
+  document.querySelector('.shop-link')?.addEventListener('click', e=>{
+    e.preventDefault(); document.getElementById('shopPanel')?.classList.toggle('show');
+  });
+  const searchIcon=document.querySelector('.search-icon'), searchBar=document.getElementById('searchBar'), closeSearch=document.getElementById('closeSearch');
+  searchIcon?.addEventListener('click', e=>{
+    e.preventDefault(); searchBar?.classList.add('show'); searchBar?.querySelector('input')?.focus();
+  });
+  closeSearch?.addEventListener('click', ()=> searchBar?.classList.remove('show'));
+
+  /* Cart drawer with coupon engine */
+  (() => {
+    if (window._yonutriCartInit) return; window._yonutriCartInit = true;
+    const drawer=document.getElementById('cart'), overlay=document.getElementById('overlay'), closeBtn=document.getElementById('closeCart'), cartIcon=document.getElementById('cartIcon'), itemsEl=document.getElementById('cartItems'), titleEl=document.getElementById('cartTitle'), totalEl=document.getElementById('totalRupees');
+    if (!drawer || !overlay || !itemsEl || !titleEl || !totalEl) return;
+    const INR=n=>'₹'+Math.max(0,Math.round(Number(n)||0)).toLocaleString('en-IN');
+
+    const CART_KEY='yonutri_cart_v1';
+    const COUPON_KEY='yonutri_coupon_v1';
+
+    const loadCart=()=>{ try{return new Map(JSON.parse(localStorage.getItem(CART_KEY)||'[]'));}catch{return new Map();} };
+    const cart=loadCart(); const saveCart=()=>{ try{localStorage.setItem(CART_KEY, JSON.stringify([...cart]));}catch{} };
+
+    const band=document.getElementById('couponBand');
+    const appliedRow=document.getElementById('appliedRow');
+    const appliedSavings=document.getElementById('appliedSavings');
+    const applyBtn=document.getElementById('applyCouponBtn');
+    const removeBtn=document.getElementById('removeCouponBtn');
+    const couponMain=document.getElementById('couponMain');
+
+    function readBand(){ if(!band) return null; const code=(band.dataset.code||'').trim(); if(!code) return null;
+      return { code, type:(band.dataset.type||'flat').toLowerCase(), amount:Number(band.dataset.amount||0), min:Number(band.dataset.min||0) }; }
+    function getApplied(){ try{ return JSON.parse(localStorage.getItem(COUPON_KEY)||'null'); } catch { return null; } }
+    function setApplied(c){ if(!c) localStorage.removeItem(COUPON_KEY); else localStorage.setItem(COUPON_KEY, JSON.stringify(c)); }
+    function calcDiscount(subtotal,c){ if(!c) return 0; if(subtotal<(c.min||0)) return 0; let d=c.type==='percent'? subtotal*(c.amount/100) : c.amount; return Math.min(Math.round(d), subtotal); }
+
+    function openCart(){drawer.classList.add('active'); overlay.classList.add('active');}
+    function closeCart(){drawer.classList.remove('active'); overlay.classList.remove('active');}
+    overlay.addEventListener('click', closeCart); closeBtn?.addEventListener('click', closeCart);
+    cartIcon?.addEventListener('click', e=>{e.preventDefault(); openCart();});
+
+    applyBtn?.addEventListener('click', ()=>{ const c=readBand(); if(c){ setApplied(c); render(); }});
+    removeBtn?.addEventListener('click', ()=>{ setApplied(null); render(); });
+
+    function render(){
+      saveCart(); itemsEl.innerHTML=''; let count=0, subtotal=0;
+
+      for (const p of cart.values()){
+        count+=p.qty; subtotal+=p.qty*p.price;
+        const variantLabel=p.grams||'';
+        itemsEl.insertAdjacentHTML('beforeend', `
+          <div class="c-row" data-key="${p.key}">
+            <img class="c-thumb" src="${p.img}" alt="">
+            <div class="c-mid">
+              <h3 class="c-title">${p.title}</h3>
+              <div class="c-sub">${variantLabel}</div>
+              <div class="qty ${p.qty===1?'is-single':''}">
+                <button class="dec" type="button">−</button>
+                <span class="count">${p.qty}</span>
+                <button class="inc" type="button">+</button>
+              </div>
+            </div>
+            <div class="c-right">
+              <div class="c-prices"><div class="c-price">${INR(p.price)}</div></div>
+              <button class="c-trash" title="Remove"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>`);
+      }
+
+      const applied=getApplied();
+      const discount=calcDiscount(subtotal, applied);
+
+      if (band){
+        const preview=calcDiscount(subtotal, readBand());
+        if (couponMain) couponMain.textContent = `Save ${INR(preview)}`;
+        const min=Number(band.dataset.min||0);
+        band.style.display = (!applied && subtotal>=min) ? 'flex' : 'none';
+      }
+      if (appliedRow){
+        if (applied && discount>0){ appliedRow.style.display='flex'; if(appliedSavings) appliedSavings.textContent=INR(discount); }
+        else { appliedRow.style.display='none'; if(applied) setApplied(null); }
+      }
+
+      titleEl.textContent = `Your cart · ${count} ${count===1?'item':'items'}`;
+      totalEl.textContent = INR(subtotal - discount);
+
+      if (window.updateCartBadge) window.updateCartBadge(count);
+      window.dispatchEvent(new CustomEvent('cart-updated',{detail:{cart:[...cart.values()], subtotal, discount}}));
+    }
+
+    itemsEl.addEventListener('click', e=>{
+      const row=e.target.closest('.c-row'); if(!row) return;
+      const key=row.dataset.key; const it=cart.get(key); if(!it) return;
+      if (e.target.classList.contains('inc')) it.qty+=1;
+      else if (e.target.classList.contains('dec')) it.qty-=1;
+      else if (e.target.closest('.c-trash')) it.qty=0;
+      else return;
+      if (it.qty<=0) cart.delete(key);
+      render();
+    });
+
+    window.addToCart=function(item, qty=1){
+      const key=(item.sku||'')+'|'+(item.grams||''); const exist=cart.get(key);
+      if (exist) exist.qty += qty; else cart.set(key,{...item,key,qty:Math.max(1,qty)});
+      render(); openCart();
+    };
+    window.changeCartQty=function(key, newQty, itemFactory){
+      if (newQty<=0){ cart.delete(key); render(); return; }
+      let it=cart.get(key);
+      if (!it){
+        if (typeof itemFactory==='function'){ it=itemFactory(); if(!it) return; it.key=key; it.qty=0; cart.set(key,it); }
+        else return;
+      }
+      it.qty=newQty; render();
+    };
+    window.getCartQty=function(key){ const it=cart.get(key); return it?it.qty:0; };
+
+    window.addEventListener('storage', (e)=>{
+      if(e.key==='yonutri_cart_v1'){ try{const arr=JSON.parse(e.newValue||'[]'); cart.clear(); arr.forEach(([k,v])=>cart.set(k,v)); }catch{} render(); }
+      if(e.key==='yonutri_coupon_v1'){ render(); }
+    });
+
+    render();
+  })();
+
+  /* PDP URL params -> UI */
+  (() => {
+    const params = new URLSearchParams(location.search);
+    const pdp = document.getElementById('pdp');
+    const titleEl = document.getElementById('pdpTitle');
+    const priceEl = document.getElementById('pdpPrice');
+    const imgEl = document.getElementById('product-image');
+    if (!pdp || !titleEl || !imgEl) return;
+
+    const formatGrams = (g) => {
+      if (!g) return '';
+      const n = String(g).trim();
+      return /^\d+$/.test(n) ? `${n} g` : n;
+    };
+
+    const urlSku   = params.get('sku')   || pdp.dataset.sku || '';
+    const urlGrams = formatGrams(params.get('grams') || pdp.dataset.grams || '');
+    const urlPrice = params.get('price') || pdp.dataset.price || '';
+    const urlImg   = params.get('img')   || imgEl.getAttribute('src') || '';
+    const urlTitle = params.get('title') || titleEl.innerText.trim();
+
+    pdp.dataset.sku   = urlSku;
+    pdp.dataset.grams = urlGrams;
+    if (urlPrice) pdp.dataset.price = urlPrice;
+
+    titleEl.textContent = urlTitle || `Product - ${urlGrams}`;
+    if (urlPrice && priceEl) priceEl.textContent = String(urlPrice);
+    if (urlImg)   imgEl.src = urlImg;
+
+    try {
+      const t = titleEl.textContent;
+      const patched = t.replace(/(\d+\s*g)\b/i, urlGrams || '$1');
+      titleEl.textContent = patched;
+    } catch {}
+  })();
+
+  /* PDP qty + Add to Cart (kept but inactive because the UI is commented) */
+  (() => {
+    const pdp=document.getElementById('pdp'); if(!pdp) return;
+    const minus=document.getElementById('minus'), plus=document.getElementById('plus'), qtyIn=document.getElementById('quantity'), addBtn=document.getElementById('pdpAdd'), qtyWrap=document.getElementById('pdpQtyWrap');
+    const titleEl=document.getElementById('pdpTitle'), imgEl=document.getElementById('product-image');
+    const sku=pdp.dataset.sku||'pdp-sku', grams=pdp.dataset.grams||'', price=Number(pdp.dataset.price||'0');
+
+    const clampZero=n=>{ n=parseInt(n??'0',10); return Number.isFinite(n)&&n>=0?n:0; };
+    const syncZeroState=()=> qtyWrap?.classList.toggle('is-zero', clampZero(qtyIn?.value)===0);
+
+    if(qtyIn){ qtyIn.value=clampZero(qtyIn.value); syncZeroState(); }
+    minus?.addEventListener('click', ()=>{ if(!qtyIn) return; qtyIn.value=Math.max(0, clampZero(qtyIn.value)-1); syncZeroState(); });
+    plus?.addEventListener('click',  ()=>{ if(!qtyIn) return; qtyIn.value=clampZero(qtyIn.value)+1; syncZeroState(); });
+    qtyIn?.addEventListener('input', ()=>{ qtyIn.value=clampZero(qtyIn.value); syncZeroState(); });
+
+    addBtn?.addEventListener('click', ()=>{
+      if(!qtyIn) return;
+      const qty=clampZero(qtyIn.value); if (qty===0) return;
+      const item={ sku, grams, title:titleEl?.innerText?.trim()||'Product', price, img:imgEl?.getAttribute('src')||'' };
+      window.addToCart && window.addToCart(item, qty);
+    });
+  })();
+
+  /* Image dots + fullscreen (FIXED) */
+  (() => {
+    const images = [
+      "images/image.png",
+      "images/image (1).png",
+      "images/image (2).png",
+      "images/image_3.png"
+    ];
+
+    const productImage = document.getElementById("product-image");
+    const zoomIcon     = document.querySelector(".zoom-icon");
+    const dotsWrap     = document.getElementById("sliderDots");
+
+    let currentImageIndex = 0;
+    let dots = [];
+
+    function buildMainDots(){
+      dotsWrap.innerHTML = images.map((_, i) =>
+        `<span class="dot ${i===currentImageIndex?'active':''}" data-idx="${i}"></span>`
+      ).join('');
+      dots = [...dotsWrap.querySelectorAll('.dot')];
+      dots.forEach(d => d.addEventListener('click', (e) => {
+        currentImageIndex = Number(e.currentTarget.dataset.idx);
+        sync();
+      }));
+    }
+
+    function updateDots(){
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentImageIndex));
+      document.querySelectorAll('#modal-dots .dot').forEach((d, i) => {
+        d.classList.toggle('active', i === currentImageIndex);
+        d.style.background = i === currentImageIndex ? '#fff' : '#ddd';
+      });
+    }
+
+    function sync(){
+      productImage.src = images[currentImageIndex];
+      const fs = document.getElementById("fullscreen-img");
+      if (fs) fs.src = images[currentImageIndex];
+      updateDots();
+    }
+
+    buildMainDots();
+    sync();
+
+    const modal = document.createElement("div");
+    modal.id = "fullscreen-modal";
+    modal.style.cssText = "display:none;position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,.7);justify-content:center;align-items:center";
+    modal.innerHTML = `
+      <div class="modal-content" style="position:relative;max-width:90vw;max-height:90vh;display:flex;align-items:center;justify-content:center">
+        <span class="close-btn" style="position:absolute;top:-40px;right:0;color:#fff;font-size:32px;cursor:pointer">&times;</span>
+        <img id="fullscreen-img" src="${images[currentImageIndex]}" alt="" style="width:min(900px,80vw);max-height:80vh;object-fit:contain;border-radius:8px;box-shadow:0 8px 40px rgba(0,0,0,.4)">
+        <div class="modal-nav" style="position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);display:flex;justify-content:space-between;pointer-events:none">
+          <span class="prev" style="pointer-events:auto;color:#fff;font-size:44px;cursor:pointer;padding:10px 16px">&#10094;</span>
+          <span class="next" style="pointer-events:auto;color:#fff;font-size:44px;cursor:pointer;padding:10px 16px">&#10095;</span>
+        </div>
+        <div id="modal-dots" style="position:absolute;bottom:-34px;left:0;right:0;display:flex;gap:8px;justify-content:center">
+          ${images.map((_,i)=>`<span class="dot ${i===0?'active':''}" style="height:10px;width:10px;border-radius:50%;background:${i===0?'#fff':'#ddd'};display:inline-block"></span>`).join('')}
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+
+    const closeBtn  = modal.querySelector(".close-btn"),
+          prevBtn   = modal.querySelector(".prev"),
+          nextBtn   = modal.querySelector(".next"),
+          modalDots = modal.querySelectorAll("#modal-dots .dot");
+
+    const showPrev = () => { currentImageIndex = (currentImageIndex - 1 + images.length) % images.length; sync(); };
+    const showNext = () => { currentImageIndex = (currentImageIndex + 1) % images.length; sync(); };
+
+    zoomIcon.addEventListener("click", () => {
+      modal.style.display = "flex";
+      document.getElementById("fullscreen-img").src = images[currentImageIndex];
+      updateDots();
+      document.body.style.overflow = 'hidden';
+    });
+    closeBtn.addEventListener("click", () => { modal.style.display="none"; document.body.style.overflow=''; });
+    modal.addEventListener("click", (e) => { if (e.target.id === "fullscreen-modal"){ modal.style.display="none"; document.body.style.overflow=''; }});
+    prevBtn.addEventListener("click", showPrev);
+    nextBtn.addEventListener("click", showNext);
+    modalDots.forEach((d,i)=> d.addEventListener('click', ()=>{ currentImageIndex=i; sync(); }));
+    window.addEventListener('keydown', (e) => {
+      if (modal.style.display !== "flex") return;
+      if (e.key === 'ArrowLeft')  showPrev();
+      if (e.key === 'ArrowRight') showNext();
+      if (e.key === 'Escape') { modal.style.display='none'; document.body.style.overflow=''; }
+    });
+  })();
+
+  /* Special Offers shelf (drawer) */
+  (() => {
+    const list=document.getElementById('offerList'); if (!list) return;
+    const INR=n=>'₹'+Number(n).toLocaleString('en-IN');
+    const OFFERS=[
+      { sku:'minis4g', title:'Protein Minis, 4g Choco…', img:'images/original.jpg', mrp:480, price:432, grams:'Offer' },
+      { sku:'powerup', title:'Power Up Choco Peanut…',   img:'images/original.jpg', mrp:399, price:359.1, grams:'Offer' }
+    ];
+    const keyOf=o=>`${o.sku}|${o.grams||''}`;
+    const qtyOf=o=> (window.getCartQty?window.getCartQty(keyOf(o)):0);
+
+    const cardHTML=o=>{
+      const q=qtyOf(o);
+      return `
+        <div class="offer-card" data-sku="${o.sku}">
+          <img class="offer-thumb" src="${o.img}" alt="">
+          <div class="offer-title">${o.title}</div>
+          <div class="offer-price">
+            ${o.mrp?`<span class="offer-old">${INR(o.mrp)}</span>`:''}
+            <span>${INR(o.price)}</span>
+          </div>
+          ${ q>0
+              ? `<div class="offer-qty">
+                   <button class="dec" type="button">−</button>
+                   <span class="count">${q}</span>
+                   <button class="inc" type="button">+</button>
+                 </div>`
+              : `<button class="offer-cta" type="button">+ ADD</button>`
+            }
+        </div>`;
+    };
+
+    const render=()=>{ list.innerHTML = OFFERS.map(cardHTML).join(''); };
+
+    list.addEventListener('click', e=>{
+      const card=e.target.closest('.offer-card'); if(!card) return;
+      const offer=OFFERS.find(o=>o.sku===card.dataset.sku); if(!offer) return;
+      const key=keyOf(offer); const cur=qtyOf(offer);
+
+      if (e.target.classList.contains('offer-cta')){
+        window.addToCart && window.addToCart({
+          sku: offer.sku, grams: offer.grams || 'Special Offer',
+          title: offer.title, price: offer.price, img: offer.img
+        });
+      } else if (e.target.classList.contains('inc')){
+        window.changeCartQty && window.changeCartQty(key, cur + 1, () => ({
+          sku: offer.sku, grams: offer.grams || 'Special Offer',
+          title: offer.title, price: offer.price, img: offer.img
+        }));
+      } else if (e.target.classList.contains('dec')){
+        window.changeCartQty && window.changeCartQty(key, cur - 1);
+      }
+      render();
+    });
+
+    window.addEventListener('cart-updated', render);
+    render();
+  })();
+
+  /* FBT Add Selected */
+  (() => {
+    const btn=document.getElementById('addSelectedFbt'); if (!btn) return;
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.fbt-item').forEach(card=>{
+        const checked=card.querySelector('.fbt-check')?.checked; if(!checked) return;
+        const title=card.querySelector('.fbt-title')?.textContent.trim()||'Product';
+        const price=649; // adjust if dynamic
+        const img=card.querySelector('img')?.getAttribute('src')||'';
+        const sku=card.dataset.sku||'fbt';
+        window.addToCart && window.addToCart({ sku, grams:'FBT', title, price, img }, 1);
+      });
+    });
+  })();
+
+  /* Bottom marquee JS */
+  (() => {
+    const container = document.getElementById('marqueeAlt');
+    const track     = document.getElementById('trackAlt');
+    const content   = document.getElementById('contentAlt');
+    if (!container || !track || !content) return;
+
+    function setup(){
+      [...track.children].forEach((el,i)=>{ if(i) el.remove(); });
+      const blockWidth = content.scrollWidth;
+      let totalWidth = blockWidth;
+      while (totalWidth < container.clientWidth + blockWidth * 2) {
+        track.appendChild(content.cloneNode(true));
+        totalWidth += blockWidth;
+      }
+      track.style.setProperty('--shift', blockWidth + 'px');
+      const styles = getComputedStyle(document.documentElement);
+      const pps = parseFloat(styles.getPropertyValue('--px-per-sec')) || 120;
+      const seconds = Math.max(6, blockWidth / pps);
+      track.style.setProperty('--duration', seconds + 's');
+    }
+
+    const init = ()=>setup();
+    if (document.fonts?.ready) document.fonts.ready.then(init);
+    init();
+    window.addEventListener('resize', setup);
+  })();
+  </script>
+
+  <!--navbar hide-->
+  <script>
+    let lastScrollY = window.scrollY;
+    const navbar = document.querySelector('.yonutri-navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > lastScrollY) {
+        navbar.classList.add('hidden');
+      } else {
+        navbar.classList.remove('hidden');
+      }
+      lastScrollY = window.scrollY;
+    });
+  </script>
+
+  <!--marquee top-->
+  <!--marquee top-->
+  <script>
+    (() => {
+      const container = document.getElementById('marquee');
+      const track     = document.getElementById('track');
+      const content   = document.getElementById('content');
+      if(!container || !track || !content) return;
+
+      function setup(){
+        // keep only the first block, then clone until we overflow enough
+        [...track.children].forEach((el,i)=>{ if(i) el.remove(); });
+        const blockWidth = content.scrollWidth;
+        let totalWidth = blockWidth;
+        const needWidth = container.clientWidth * 2 + blockWidth;
+        while(totalWidth < needWidth){
+          track.appendChild(content.cloneNode(true));
+          totalWidth += blockWidth;
+        }
+        track.style.setProperty('--shift', blockWidth + 'px');
+        const styles = getComputedStyle(document.documentElement);
+        const pxPerSec = parseFloat(styles.getPropertyValue('--px-per-sec')) || 120;
+        const seconds = Math.max(6, blockWidth / pxPerSec);
+        track.style.setProperty('--duration', seconds + 's');
+      }
+
+      const init = ()=>setup();
+      if (document.fonts?.ready) document.fonts.ready.then(init);
+      init();
+      window.addEventListener('resize', setup);
+    })();
+  </script>
+</body>
+</html>

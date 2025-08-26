@@ -31,17 +31,7 @@
     .yonutri-navbar.hidden { transform: translateY(-100%); }
 
     /* Shop panel */
-    .shop-panel{position:absolute;top:105px;left:0;width:100%;background:#4b0082;color:#fff;overflow:hidden;max-height:0;transition:max-height .4s ease;z-index:1000}
-    .shop-panel.show{max-height:500px}
-    .shop-panel-content{display:flex;max-width:1200px;margin:0 auto;align-items:flex-start}
-    a.shop-link{display:block;color:inherit;text-decoration:none}
-    .shop-sidebar{width:400px;padding:10px 20px;background:#173215;position:relative;flex-shrink:0}
-    .shop-sidebar h5{font-size:1rem;color:#eee;padding-left:20px}
-    .category-grid{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:20px}
-    .category-item{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;background:#f7f7f7;border-radius:15px;color:#3e2723}
-    .category-item span{font-weight:700;width:100px}
-    .category-item img{width:100px;height:100px;object-fit:contain}
-
+    
     /* Drawer */
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:.25s;z-index:1001}
     .overlay.active{opacity:1;pointer-events:auto}
@@ -220,12 +210,18 @@
   <!-- Shop panel -->
   <div class="shop-panel" id="shopPanel">
     <div class="shop-panel-content">
-      <a class="shop-link" href="#"><div class="shop-sidebar"><h5>SHOP BY CATEGORY</h5></div></a>
+      <a href="#" class="shop-link"><div class="shop-sidebar"><h5>SHOP BY CATEGORY</h5></div></a>
       <div class="category-grid">
-        <a href="#" class="shop-link"><div class="category-item"><span>New Launches & Offers</span><img src="images/Photo1 (1).jpeg" alt=""></div></a>
-        <a href="#" class="shop-link"><div class="category-item"><span>All Products</span><img src="images/Photo1 (2).jpeg" alt=""></div></a>
-        <a href="#" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/Photo1 (3).jpeg" alt=""></div></a>
-        <a href="#" class="shop-link"><div class="category-item"><span>Bars</span><img src="images/Photo1 (4).jpeg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>New Launches & Offers</span><img src="images/image (1).png" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>All Products</span><img src="images/image (2).png" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/chocolate6.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Bars</span><img src="images/roasted6.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Bars</span><img src="images/roasted7.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/roasted8.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/roasted9.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/chocolate7.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>All Products</span><img src="images/chocolate8.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Why Protein</span><img src="images/chocolate8.jpg" alt=""></div></a>
       </div>
     </div>
   </div>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Local Admin Panel</title>
+  <style>
+    :root{
+      --bg: #e5e7eb;         /* slate-900 */
+      --panel: #3C2821;      /* gray-900 */
+      --muted: #e5e7eb;      /* slate-400 */
+      --text: #e5e7eb;       /* gray-200 */
+      --brand: #FFA500;      /* green-500 */
+      --brand-600: #FFA500;  /* green-600 */
+      --card: #3C2821;       /* deeper panel */
+      --danger: #ef4444;     /* red-500 */
+      --warn: #f59e0b;       /* amber-500 */
+      --ok: #FFA500;         /* emerald-500 */
+      --border: #3C2821;     /* gray-800 */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius-xl: 18px;
+      --radius-lg: 12px;
+      --radius-sm: 8px;
+    }
+
+    *{ box-sizing:border-box; }
+    html, body { margin:0; padding:0; 
+      background:var(--bg); 
+      color:var(--text); 
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+    }
+
+    a { 
+      color: inherit;
+       text-decoration: none;
+     }
+    button { 
+      cursor:pointer; 
+      border:0; }
+
+    /* ---------- Auth Screen ---------- */
+    .auth-wrap{
+      min-height:100vh; 
+      display:grid; 
+      place-items:center; 
+      padding:32px;
+      background: #e5e7eb;
+    }
+    .auth-card{
+      width:100%;
+       max-width:460px; 
+       background:var(--panel);
+      border:1px solid var(--border); 
+      border-radius:var(--radius-xl);
+      box-shadow: var(--shadow); 
+      overflow:hidden;
+    }
+    .auth-head{
+      padding:24px 28px; 
+      border-bottom:1px solid var(--border);
+      display:flex; 
+      align-items:center; 
+      gap:12px;
+      background: #3C2821;
+    }
+    .brand-dot{
+       width:12px; 
+       height:12px; 
+       border-radius:999px; 
+       background:var(--brand); 
+       /* box-shadow:0 0 20px rgba(34,197,94,.7); */
+      }
+    .auth-head h1{ 
+      font-size:20px; 
+      margin:0; 
+      letter-spacing:.2px; 
+    }
+    .auth-body{ 
+      padding:26px 28px 10px; 
+      background-color: #3C2821;
+    }
+    .auth-body p{ 
+      margin:0 0 18px; 
+      color: #e2e8f0; 
+      font-size:14px;
+     }
+
+    .field{ 
+      display:flex; 
+      flex-direction:column; 
+      gap:8px;
+       margin:14px 0; 
+       /* background-color: #d1fae5; */
+      }
+    .field label{ 
+      font-size:13px; 
+      color:#cbd5e1; 
+    }
+    .input{
+      background:#cbd5e1; 
+      color:#3C2821; 
+      border:1px solid var(--border);
+      padding:12px 14px; 
+      border-radius:var(--radius-sm); 
+      outline:none; 
+      font-size:14px;
+    }
+    .input:focus{ 
+      border-color:#cbd5e1; 
+      box-shadow:0 0 0 3px rgba(51,65,85,.35) inset; 
+    }
+
+    .pw-wrap{ 
+      position:relative; 
+    }
+    .pw-toggle{
+      position:absolute; 
+      right:10px; 
+      top:50%; 
+      transform:translateY(-50%);
+      background:transparent; 
+      color:var(--muted); 
+      font-size:12px; 
+      padding:6px 8px; 
+      border-radius:6px;
+    }
+    .pw-toggle:hover{ 
+      color:#e2e8f0;  
+      background:#0a1222; 
+    }
+
+    .row{ 
+      display:flex; 
+      align-items:center; 
+      justify-content:space-between; 
+      gap:12px; 
+      margin-top:6px; 
+    }
+    .row .remember{ 
+      display:flex; 
+      align-items:center; 
+      gap:8px; 
+      font-size:13px; 
+      color:#cbd5e1;
+     }
+    .auth-actions{ 
+      display:grid; 
+      gap:10px; 
+      margin:18px 0 8px;
+     }
+    .btn{
+      padding:12px 14px; 
+      font-weight:600; 
+      border-radius:10px; 
+      transition:.2s ease;
+      display:inline-flex; 
+      align-items:center; 
+      justify-content:center; 
+      gap:10px;
+    }
+    .btn-primary{ 
+      background:var(--brand); 
+      color:#06260f; 
+    }
+    .btn-primary:hover{ 
+      background:var(--brand-600); 
+      color:#041b0b; 
+    }
+    .btn-ghost{ 
+      background:transparent; 
+      border:1px dashed var(--border);
+       color:#cbd5e1;
+       }
+    .btn-ghost:hover{
+       border-color:#334155; 
+       color:#e2e8f0; }
+
+    .auth-foot{ 
+      padding:0 28px 26px; 
+      display:flex;
+       justify-content:space-between; align-items:center;
+      background-color: #3C2821; }
+    .small{ font-size:12px; color:var(--muted); }
+
+    .alert{
+      margin:8px 0 0; padding:10px 12px; border-radius:10px; font-size:13px; display:none;
+    }
+    .alert.error{ background:rgba(239,68,68,.14); border:1px solid rgba(239,68,68,.35); color:#fecaca; }
+    .alert.ok{ background:rgba(16,185,129,.14); border:1px solid rgba(16,185,129,.35); color:#bbf7d0; }
+
+    /* ---------- App Shell ---------- */
+    .app{ display:none; min-height:100vh; }
+    .topbar{
+      height:64px; display:flex; 
+      align-items:center;
+       justify-content:space-between; gap:16px;
+      padding:0 18px; 
+      border-bottom:1px solid var(--border); 
+      background:var(--panel); 
+      background-color: #3C2821;
+      position:sticky; top:0; z-index:10;
+    }
+    .brand{
+      display:flex; align-items:center; 
+      gap:12px; padding:8px 10px; border-radius:12px;
+      background: linear-gradient(90deg, rgba(34,197,94,.08), transparent);
+    }
+    .brand .logo{
+      width:28px; height:28px; border-radius:8px; display:grid; place-items:center;
+      background: radial-gradient(100% 100% at 20% 20%, #FFA500, #064e3b);
+      box-shadow: inset 0 0 18px rgba(0,0,0,.4), 0 0 24px rgba(34,197,94,.2);
+      font-weight:800;
+    }
+    .brand .title{ font-weight:700; letter-spacing:.3px; }
+
+    .top-actions{ display:flex; align-items:center; gap:10px; }
+    .pill{
+      padding:8px 12px; border:1px solid var(--border); border-radius:999px; color:#cbd5e1; font-size:13px;
+      background:linear-gradient(180deg, #0b1220, #0a0f1d);
+    }
+    .logout{ background:transparent; border:1px solid #263244; 
+      color:#fecaca; }
+    .logout:hover{ border-color:#334155; }
+    .shell{
+      display:grid; 
+      grid-template-columns: 250px 1fr; 
+      min-height: calc(100vh - 64px);
+    }
+    .sidebar{
+      border-right:1px solid var(--border); 
+      background:#3C2821;
+      padding:16px; position:sticky; top:64px; align-self:start; height: calc(100vh - 64px); overflow:auto;
+    }
+    .side-group{ margin-bottom:16px; }
+    .side-title{ font-size:12px; color:var(--muted); margin:6px 10px 8px; text-transform:uppercase; letter-spacing:.8px; }
+    .side-link{
+      display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:10px; color:#cbd5e1; border:1px solid transparent;
+    }
+    .side-link:hover{ 
+      background:#0b1426; 
+      border-color:#14203a;
+     }
+    .side-link.active{ 
+      background:rgba(34,197,94,.1); 
+      border-color:#12331f; 
+      color:#d1fae5; 
+    }
+
+    .content{
+      padding:22px; background: radial-gradient(900px 500px at 10% 0%, rgba(34,197,94,.06), transparent 40%);
+    }
+    .grid{ display:grid; gap:16px; }
+    .grid.cards{ grid-template-columns: repeat(12, 1fr); }
+    .card{
+      background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px; box-shadow:var(--shadow);
+    }
+    .kpi{ grid-column: span 3; }
+    .kpi h3{ margin:0; font-size:13px; color:var(--muted); }
+    .kpi .big{ font-size:28px; font-weight:800; margin-top:6px; }
+    .kpi .trend{ font-size:12px; margin-top:6px; }
+    .trend.up{ color:#FFA500; }
+    .trend.down{ color:#fecaca; }
+
+    .card h2{ margin:0 0 10px; font-size:16px; letter-spacing:.2px; }
+    .table{ width:100%; border-collapse: collapse; font-size:14px; }
+    .table th, .table td{ text-align:left; padding:12px 10px; border-bottom:1px solid var(--border); }
+    .table th{ color:#cbd5e1; font-weight:600; }
+    .status{ display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid var(--border); }
+    .status.ok{ background:rgba(16,185,129,.12); color:#bbf7d0; border-color:rgba(16,185,129,.35); }
+    .status.warn{ background:rgba(245,158,11,.12); color:#fde68a; border-color:rgba(245,158,11,.35); }
+    .status.danger{ background:rgba(239,68,68,.12); color:#fecaca; border-color:rgba(239,68,68,.35); }
+
+    .actions{ display:flex; gap:8px; }
+    .btn-sm{
+      padding:8px 10px; font-size:12px; border-radius:8px; background:#0b1426; color:#cbd5e1; border:1px solid #14203a;
+    }
+    .btn-sm:hover{ background:#0f1b33; }
+
+    .cards-2col{ grid-template-columns: repeat(2, 1fr); }
+    .settings .row{ display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+    .muted{ color:var(--muted); }
+
+    @media (max-width: 1100px){
+      .kpi{ grid-column: span 6; }
+    }
+    @media (max-width: 800px){
+      .shell{ grid-template-columns: 1fr; }
+      .sidebar{ position:static; height:auto; display:flex; gap:8px; flex-wrap:wrap; }
+      .kpi{ grid-column: span 12; }
+      .cards-2col{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============== AUTH SCREEN ============== -->
+  <section class="auth-wrap" id="authScreen" aria-hidden="false">
+    <div class="auth-card" role="dialog" aria-labelledby="authTitle" aria-describedby="authDesc">
+      <div class="auth-head">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <h1 id="authTitle">Admin Login</h1>
+      </div>
+      <div class="auth-body">
+        <p id="authDesc">Login to access the local admin panel. (Demo only—no real server.)</p>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" class="input" type="email" placeholder="admin@local" autocomplete="username" />
+        </div>
+
+        <div class="field pw-wrap">
+          <label for="password">Password</label>
+          <input id="password" class="input" type="password" placeholder="••••••••" autocomplete="current-password"/>
+          <button class="pw-toggle" id="togglePw" type="button" aria-label="Show password">Show</button>
+        </div>
+
+        <div class="row">
+          <label class="remember">
+            <input id="remember" type="checkbox" />
+            Remember me
+          </label>
+          <a class="small" href="#" id="seedBtn" title="Set/Reset default admin">Reset admin</a>
+        </div>
+
+        <div class="auth-actions">
+          <button id="loginBtn" class="btn btn-primary">Login</button>
+          <!-- <button id="guestBtn" class="btn btn-ghost" title="View-only mode">Continue as Guest</button> -->
+        </div>
+
+        <div class="alert error" id="authError" role="alert">Invalid credentials.</div>
+        <div class="alert ok" id="authOk" role="status">Admin user reset successfully.</div>
+      </div>
+
+      <div class="auth-foot">
+        <!-- <span class="small">Tip: default is <b>admin@local</b> / <b>Admin@123</b></span> -->
+        <!-- <span class="small">Local only • HTML/CSS/JS</span> -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== APP (PROTECTED) ============== -->
+  <section class="app" id="app" aria-hidden="true">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div class="title">Admin Panel</div>
+        <span id="roleBadge" class="pill" title="Your role">role: guest</span>
+      </div>
+      <div class="top-actions">
+        <span class="pill" id="whoami">—</span>
+        <button id="logoutBtn" class="pill logout">Logout</button>
+      </div>
+    </header>
+
+    <div class="shell">
+      <aside class="sidebar" role="navigation" aria-label="Sidebar">
+        <div class="side-group">
+          <div class="side-title">Overview</div>
+          <a href="#" data-view="dashboard" class="side-link active">📊 Dashboard</a>
+        </div>
+        <div class="side-group">
+          <div class="side-title">Manage</div>
+          <a href="#" data-view="orders" class="side-link">🧾 Orders</a>
+          <a href="#" data-view="products" class="side-link">📦 Products</a>
+          <a href="#" data-view="users" class="side-link">👤 Users</a>
+        </div>
+        <div class="side-group">
+          <div class="side-title">Settings</div>
+          <a href="#" data-view="settings" class="side-link">⚙ Settings</a>
+        </div>
+      </aside>
+
+      <main class="content" id="content" role="main" tabindex="-1">
+
+        <!-- DASHBOARD -->
+        <section class="view" id="view-dashboard">
+          <div class="grid cards">
+            <div class="card kpi">
+              <h3>Total Revenue</h3>
+              <div class="big" id="kpiRev">₹2,41,200</div>
+              <div class="trend up">▲ +8.2% vs last month</div>
+            </div>
+            <div class="card kpi">
+              <h3>Orders</h3>
+              <div class="big" id="kpiOrders">1,238</div>
+              <div class="trend up">▲ +3.1% vs last month</div>
+            </div>
+            <div class="card kpi">
+              <h3>Conversion</h3>
+              <div class="big">2.7%</div>
+              <div class="trend down">▼ −0.2% vs last week</div>
+            </div>
+            <div class="card kpi">
+              <h3>Avg. Order Value</h3>
+              <div class="big">₹1,948</div>
+              <div class="trend up">▲ +1.4% vs last month</div>
+            </div>
+          </div>
+
+          <div class="grid cards cards-2col" style="margin-top:16px">
+            <div class="card">
+              <h2>Recent Orders</h2>
+              <table class="table" id="ordersTableDash">
+                <thead>
+                  <tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th></tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="card">
+              <h2>Top Products</h2>
+              <table class="table">
+                <thead>
+                  <tr><th>SKU</th><th>Title</th><th>Sold</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>PB-500</td><td>Peanut Butter 500g</td><td>412</td></tr>
+                  <tr><td>WB-1KG</td><td>Whey Protein 1kg</td><td>287</td></tr>
+                  <tr><td>BAR-12</td><td>Protein Bars (12 pack)</td><td>198</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ORDERS -->
+        <section class="view" id="view-orders" hidden>
+          <div class="card">
+            <h2>Orders</h2>
+            <table class="table" id="ordersTable">
+              <thead>
+                <tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- PRODUCTS -->
+        <section class="view" id="view-products" hidden>
+          <div class="card">
+            <h2>Products</h2>
+            <table class="table" id="productsTable">
+              <thead>
+                <tr><th>SKU</th><th>Title</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PB-500</td><td>Peanut Butter 500g</td><td>₹299</td><td>120</td>
+                  <td class="actions">
+                    <button class="btn-sm">Edit</button>
+                    <button class="btn-sm">Duplicate</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>WB-1KG</td><td>Whey Protein 1kg</td><td>₹1,899</td><td>48</td>
+                  <td class="actions">
+                    <button class="btn-sm">Edit</button>
+                    <button class="btn-sm">Duplicate</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>BAR-12</td><td>Protein Bars (12 pack)</td><td>₹799</td><td>72</td>
+                  <td class="actions">
+                    <button class="btn-sm">Edit</button>
+                    <button class="btn-sm">Duplicate</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- USERS -->
+        <section class="view" id="view-users" hidden>
+          <div class="card">
+            <h2>Users</h2>
+            <table class="table" id="usersTable">
+              <thead>
+                <tr><th>Email</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>admin@local</td><td>admin</td>
+                  <td><span class="status ok">Active</span></td>
+                  <td class="actions">
+                    <button class="btn-sm">Impersonate</button>
+                    <button class="btn-sm">Disable</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>viewer@local</td><td>viewer</td>
+                  <td><span class="status warn">Pending</span></td>
+                  <td class="actions">
+                    <button class="btn-sm">Approve</button>
+                    <button class="btn-sm">Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- SETTINGS -->
+        <section class="view settings" id="view-settings" hidden>
+          <div class="card">
+            <h2>Settings</h2>
+            <div class="row">
+              <div>
+                <label class="small">Store Name</label>
+                <input id="storeName" class="input" value="Yo Nutri! Store (Local Demo)" />
+              </div>
+              <div>
+                <label class="small">Currency</label>
+                <input id="currency" class="input" value="INR (₹)" />
+              </div>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <div>
+                <label class="small">Support Email</label>
+                <input id="supportEmail" class="input" value="support@local.test" />
+              </div>
+              <div>
+                <label class="small">Theme</label>
+                <input class="input" value="Dark" disabled />
+              </div>
+            </div>
+            <div style="margin-top:14px">
+              <button class="btn btn-primary" id="saveSettings">Save Settings</button>
+              <span class="small muted" id="settingsMsg"></span>
+            </div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <h2>Danger Zone</h2>
+            <p class="muted">Clear local session & demo data from your browser.</p>
+            <button class="btn btn-ghost" id="clearAll">Clear Local Data</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </section>
+
+<script>
+  /* =======================
+     SIMPLE LOCAL AUTH DEMO
+     ======================= */
+
+  const DEFAULT_ADMIN = { email: 'admin@local', password: 'Admin@123', role: 'admin' };
+  const LS_KEYS = {
+    USER: 'demo_user',
+    REMEMBER: 'demo_remember',
+    SETTINGS: 'demo_settings',
+    ORDERS: 'demo_orders'
+  };
+
+  // Seed default admin into localStorage if missing
+  function seedAdmin(showToast = false){
+    const saved = JSON.parse(localStorage.getItem(LS_KEYS.USER) || 'null');
+    if(!saved || !saved.email){
+      localStorage.setItem(LS_KEYS.USER, JSON.stringify(DEFAULT_ADMIN));
+    }
+    if(showToast){
+      const ok = document.getElementById('authOk');
+      ok.style.display = 'block';
+      setTimeout(()=> ok.style.display = 'none', 1600);
+    }
+  }
+
+  // Fake dataset for orders
+  function seedOrders(){
+    if(!localStorage.getItem(LS_KEYS.ORDERS)){
+      const sample = [
+        { id: 'ORD-1009', name: 'Neha Sharma', total: 1948, status: 'paid' },
+        { id: 'ORD-1008', name: 'Rahul Verma', total: 799, status: 'pending' },
+        { id: 'ORD-1007', name: 'Priya Singh', total: 299, status: 'refunded' },
+        { id: 'ORD-1006', name: 'Aarav Iyer', total: 1899, status: 'paid' },
+        { id: 'ORD-1005', name: 'Ananya Rao', total: 299, status: 'paid' },
+      ];
+      localStorage.setItem(LS_KEYS.ORDERS, JSON.stringify(sample));
+    }
+  }
+
+  function getSavedAdmin(){
+    const saved = JSON.parse(localStorage.getItem(LS_KEYS.USER) || 'null');
+    if(!saved) return null;
+    return saved;
+  }
+
+  function saveSettings(obj){
+    localStorage.setItem(LS_KEYS.SETTINGS, JSON.stringify(obj));
+  }
+  function loadSettings(){
+    const s = JSON.parse(localStorage.getItem(LS_KEYS.SETTINGS) || 'null');
+    return s || { storeName: 'Yo Nutri! Store (Local Demo)', currency: 'INR (₹)', supportEmail: 'support@local.test' };
+  }
+
+  // Minimal "auth"
+  function login(email, password, remember){
+    const admin = getSavedAdmin();
+    if(!admin) return { ok:false, msg:'No admin configured. Click "Reset admin".' };
+    const ok = (email.trim().toLowerCase() === admin.email.toLowerCase() && password === admin.password);
+    if(ok){
+      const session = { email: admin.email, role: admin.role, ts: Date.now() };
+      sessionStorage.setItem('session', JSON.stringify(session));
+      if(remember){
+        localStorage.setItem(LS_KEYS.REMEMBER, '1');
+      }else{
+        localStorage.removeItem(LS_KEYS.REMEMBER);
+      }
+      return { ok:true };
+    }
+    return { ok:false, msg:'Invalid credentials.' };
+  }
+
+  function logout(){
+    sessionStorage.removeItem('session');
+  }
+
+  function isLoggedIn(){
+    const s = JSON.parse(sessionStorage.getItem('session') || 'null');
+    return s && s.email;
+  }
+
+  // UI Elements
+  const authScreen = document.getElementById('authScreen');
+  const app = document.getElementById('app');
+  const loginBtn = document.getElementById('loginBtn');
+  const guestBtn = document.getElementById('guestBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const seedBtn = document.getElementById('seedBtn');
+  const authError = document.getElementById('authError');
+  const whoami = document.getElementById('whoami');
+  const roleBadge = document.getElementById('roleBadge');
+
+  const emailEl = document.getElementById('email');
+  const pwEl = document.getElementById('password');
+  const rememberEl = document.getElementById('remember');
+
+  const pwToggle = document.getElementById('togglePw');
+
+  // Routes / Views
+  const sideLinks = [...document.querySelectorAll('.side-link')];
+  const views = {
+    dashboard: document.getElementById('view-dashboard'),
+    orders: document.getElementById('view-orders'),
+    products: document.getElementById('view-products'),
+    users: document.getElementById('view-users'),
+    settings: document.getElementById('view-settings'),
+  };
+
+  // Setup
+  seedAdmin(false);
+  seedOrders();
+
+  // Auto-remember session on reload?
+  if(localStorage.getItem(LS_KEYS.REMEMBER)){
+    // If previously logged in, restore session as admin
+    const admin = getSavedAdmin();
+    if(admin){
+      sessionStorage.setItem('session', JSON.stringify({ email: admin.email, role: admin.role, ts: Date.now() }));
+    }
+  }
+
+  // Update shell visibility
+  function showApp(role = 'guest', email='—'){
+    authScreen.style.display = 'none';
+    app.style.display = 'block';
+    whoami.textContent = email;
+    roleBadge.textContent = 'role: ' + role;
+  }
+  function showAuth(){
+    authScreen.style.display = 'grid';
+    app.style.display = 'none';
+  }
+
+  // Populate tables
+  function statusBadge(status){
+    if(status === 'paid') return '<span class="status ok">Paid</span>';
+    if(status === 'pending') return '<span class="status warn">Pending</span>';
+    if(status === 'refunded') return '<span class="status danger">Refunded</span>';
+    return '<span class="status">—</span>';
+  }
+  function renderOrders(){
+    const orders = JSON.parse(localStorage.getItem(LS_KEYS.ORDERS) || '[]');
+    const tbody1 = document.querySelector('#ordersTableDash tbody');
+    const tbody2 = document.querySelector('#ordersTable tbody');
+    if(tbody1){
+      tbody1.innerHTML = orders.slice(0,4).map(o=>(
+        `<tr>
+          <td>${o.id}</td>
+          <td>${o.name}</td>
+          <td>₹${o.total.toLocaleString('en-IN')}</td>
+          <td>${statusBadge(o.status)}</td>
+        </tr>`
+      )).join('');
+    }
+    if(tbody2){
+      tbody2.innerHTML = orders.map(o=>(
+        `<tr>
+          <td>${o.id}</td>
+          <td>${o.name}</td>
+          <td>₹${o.total.toLocaleString('en-IN')}</td>
+          <td>${statusBadge(o.status)}</td>
+          <td class="actions">
+            <button class="btn-sm" data-act="markPaid" data-id="${o.id}">Mark Paid</button>
+            <button class="btn-sm" data-act="refund" data-id="${o.id}">Refund</button>
+          </td>
+        </tr>`
+      )).join('');
+    }
+  }
+
+  function attachOrderActions(){
+    const table = document.getElementById('ordersTable');
+    if(!table) return;
+    table.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button[data-act]');
+      if(!btn) return;
+      const act = btn.dataset.act;
+      const id = btn.dataset.id;
+      let orders = JSON.parse(localStorage.getItem(LS_KEYS.ORDERS) || '[]');
+      const i = orders.findIndex(o=>o.id===id);
+      if(i === -1) return;
+      if(act === 'markPaid'){ orders[i].status = 'paid'; }
+      if(act === 'refund'){ orders[i].status = 'refunded'; }
+      localStorage.setItem(LS_KEYS.ORDERS, JSON.stringify(orders));
+      renderOrders();
+    });
+  }
+
+  // Navigation
+  function switchView(name){
+    Object.entries(views).forEach(([key, el])=>{
+      const active = (key === name);
+      el.hidden = !active;
+    });
+    sideLinks.forEach(a=>{
+      a.classList.toggle('active', a.dataset.view === name);
+    });
+    // focus main for a11y
+    document.getElementById('content').focus();
+    if(name === 'orders') attachOrderActions();
+  }
+
+  sideLinks.forEach(a=>{
+    a.addEventListener('click', (e)=>{
+      e.preventDefault();
+      switchView(a.dataset.view);
+    });
+  });
+
+  // Login actions
+  loginBtn.addEventListener('click', ()=>{
+    const email = emailEl.value || '';
+    const pass = pwEl.value || '';
+    const remember = !!rememberEl.checked;
+
+    authError.style.display = 'none';
+    if(!email || !pass){
+      authError.textContent = 'Please enter email and password.';
+      authError.style.display = 'block';
+      return;
+    }
+    const res = login(email, pass, remember);
+    if(res.ok){
+      const sess = JSON.parse(sessionStorage.getItem('session'));
+      showApp(sess.role, sess.email);
+      renderOrders();
+      switchView('dashboard');
+    }else{
+      authError.textContent = res.msg || 'Invalid credentials.';
+      authError.style.display = 'block';
+    }
+  });
+
+  guestBtn.addEventListener('click', ()=>{
+    // View-only (guest)
+    sessionStorage.setItem('session', JSON.stringify({ email: 'guest@local', role: 'guest', ts: Date.now() }));
+    showApp('guest', 'guest@local');
+    renderOrders();
+    switchView('dashboard');
+  });
+
+  logoutBtn.addEventListener('click', ()=>{
+    logout();
+    showAuth();
+  });
+
+  seedBtn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    localStorage.removeItem(LS_KEYS.USER);
+    seedAdmin(true);
+  });
+
+  // password toggle
+  pwToggle.addEventListener('click', ()=>{
+    const isPw = pwEl.getAttribute('type') === 'password';
+    pwEl.setAttribute('type', isPw ? 'text' : 'password');
+    pwToggle.textContent = isPw ? 'Hide' : 'Show';
+  });
+
+  // Settings
+  const storeNameEl = document.getElementById('storeName');
+  const currencyEl = document.getElementById('currency');
+  const supportEmailEl = document.getElementById('supportEmail');
+  const saveSettingsBtn = document.getElementById('saveSettings');
+  const settingsMsg = document.getElementById('settingsMsg');
+  const clearAllBtn = document.getElementById('clearAll');
+
+  function hydrateSettings(){
+    const s = loadSettings();
+    if(storeNameEl) storeNameEl.value = s.storeName;
+    if(currencyEl) currencyEl.value = s.currency;
+    if(supportEmailEl) supportEmailEl.value = s.supportEmail;
+  }
+
+  saveSettingsBtn.addEventListener('click', ()=>{
+    saveSettings({
+      storeName: storeNameEl.value,
+      currency: currencyEl.value,
+      supportEmail: supportEmailEl.value
+    });
+    settingsMsg.textContent = 'Saved ✓';
+    setTimeout(()=> settingsMsg.textContent = '', 1400);
+  });
+
+  clearAllBtn.addEventListener('click', ()=>{
+    localStorage.removeItem(LS_KEYS.REMEMBER);
+    localStorage.removeItem(LS_KEYS.SETTINGS);
+    localStorage.removeItem(LS_KEYS.ORDERS);
+    sessionStorage.removeItem('session');
+    settingsMsg.textContent = 'Cleared local data. You will be logged out.';
+    setTimeout(()=> location.reload(), 600);
+  });
+
+  // On load: if session exists, go to app; else auth
+  (function boot(){
+    const sess = JSON.parse(sessionStorage.getItem('session') || 'null');
+    if(sess && sess.email){
+      showApp(sess.role || 'guest', sess.email);
+      renderOrders();
+      hydrateSettings();
+      switchView('dashboard');
+    }else{
+      showAuth();
+      hydrateSettings();
+    }
+  })();
+</script>
+</body>
+</html>

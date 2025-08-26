@@ -177,34 +177,81 @@
   .yo-price .old{ text-decoration:line-through; color:#8a7b6f; font-weight:600; margin-right:8px; font-size:18px }
   .yo-tax{ margin:0 0 12px; font-size:13px; color:#777 }
   .yo-actions{ margin-top:auto }
-  .yo-cta,.qty.yo-qty{ width:100%; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center }
-  .yo-cta{ border:none; background:#FFA500; color:#fff; font-weight:900; font-size:17px; cursor:pointer }
-  .yo-qty{ border:1.5px solid #000; background:#fff; gap:14px }
+
+  /* =========================
+     ROUNDED "GRAMS + ADD TO CART"
+     (alignment updated)
+     ========================= */
+  .yo-split{
+    display:flex;
+    align-items:stretch;      /* make both halves same height */
+    width:100%;
+    border:2px solid #FFB347;
+    border-radius:9999px;     /* pill ends */
+    overflow:hidden;          /* hide inner corners */
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
+    background:#fff;
+  }
+  .pack-select{
+    width:100%;
+    max-width:180px;
+    height:48px;              /* same as button */
+    line-height:48px;         /* vertical centering of label */
+    border:0;                 /* no seam */
+    background:#fff8f0;
+    font-size:13px; font-weight:600; color:#2b1e17;
+    padding:0 40px 0 14px;    /* space for custom arrow */
+    cursor:pointer; appearance:none; -webkit-appearance:none; -moz-appearance:none; outline:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><path fill='black' d='M0 2 L5 7 L10 2'/></svg>");
+    background-repeat:no-repeat;background-position:right 12px center;background-size:12px;
+  }
+  .pack-select::-ms-expand{ display:none; } /* legacy arrow */
+  .pack-select:focus{ outline:none; }
+  .pack-select option{ background:#fff; color:#2b1e17; }
+
+  .yo-cta{
+    flex:1;
+    height:48px;              /* same as select */
+    border:0;
+    background:#FFB347;
+    color:#fff;
+    font-weight:900;
+    font-size:12px;
+    letter-spacing:.4px;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:transform .06s, filter .2s;
+  }
+  .yo-cta:hover{ filter:brightness(.95) }
+  .yo-cta:active{ transform:translateY(1px) }
+
+  /* When qty is showing, it is already fully rounded */
+  .qty.yo-qty{ width:100%; height:48px; border-radius:9999px; display:flex; align-items:center; justify-content:center; border:1.5px solid #000; background:#fff; gap:14px }
   .yo-qty .inc{ background:var(--pill); color:#fff }
   .yo-qty .dec{ background:var(--pill); color:#fff }
   .yo-qty.is-single .dec{ background:var(--pill-muted); color:var(--pill-muted-ink) }
 
+  /* Responsive cards per row */
   @media (max-width:1200px){ .yo-grid{ grid-template-columns:repeat(3,1fr) } }
   @media (max-width:900px){  .yo-grid{ grid-template-columns:repeat(2,1fr) } }
   @media (max-width:560px){  .yo-grid{ grid-template-columns:1fr } }
 
-  /* Split controls */
-  .yo-split { display:flex;width:100%;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.08); }
-  .pack-select {
-    width:100%;max-width:160px;height:42px;border:1px solid #ffb347;background:#fff8f0;
-    font-size:13px;font-weight:600;color:#2b1e17;padding:0 35px 0 12px;border-radius:6px;cursor:pointer;
-    appearance:none;outline:none;position:relative;
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'><path fill='black' d='M0 2 L5 7 L10 2'/></svg>");
-    background-repeat:no-repeat;background-position:right 10px center;background-size:12px;
-  }
-  .yo-cta { flex:1;height:44px;border:1.5px solid #f8c7da;border-left:0;background:#FFB347;color:#fff;font-weight:900;font-size:12px;letter-spacing:.4px;text-transform:uppercase;cursor:pointer;border-radius:0;transition:transform .06s, filter .2s; }
-  .yo-cta:hover{ filter:brightness(.95) }
-  .yo-cta:active{ transform:translateY(1px) }
-
+  /* Mobile: stacked but still rounded */
   @media (max-width:520px){
-    .yo-split{ flex-direction:column;border-radius:10px }
-    .pack-select,.yo-cta{ border-radius:0;border:1.5px solid #f8c7da }
-    .pack-select{ border-bottom:0 } .yo-cta{ border-top:0 }
+    .yo-split{
+      flex-direction:column;
+      border-radius:16px;   /* soft rounded box */
+    }
+    .pack-select,
+    .yo-cta{
+      height:48px;
+      border:0;            /* rely on outer border */
+      line-height:48px;
+    }
+    .pack-select{ border-bottom:1.5px solid #FFB347;} /* subtle divider */
+  }
+  .pack{
+    text-align: center;
   }
 
   /* image slide animations */
@@ -275,16 +322,16 @@
     <div class="shop-panel-content">
       <a href="#" class="shop-link"><div class="shop-sidebar"><h5>SHOP BY CATEGORY</h5></div></a>
       <div class="category-grid">
-        <a href="" class="shop-link"><div class="category-item"><span>New Launches & Offers</span><img src="../new Yo! Nutri/images/image (1).png" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>All Products</span><img src="../new Yo! Nutri/images/image (2).png" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="../new Yo! Nutri/images/chocolate6.jpg" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>Bars</span><img src="../new Yo! Nutri/images/roasted6.jpg" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>Bars</span><img src="../new Yo! Nutri/images/roasted7.jpg" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="../new Yo! Nutri/images/roasted8.jpg" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="../new Yo! Nutri/images/roasted9.jpg" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="../new Yo! Nutri/images/chocolate7.jpg" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>All Products</span><img src="../new Yo! Nutri/images/chocolate8.jpg" alt=""></div></a>
-        <a href="" class="shop-link"><div class="category-item"><span>Why Protein</span><img src="../new Yo! Nutri/images/chocolate8.jpg" alt=""></div></a>
+        <a href="#yn-love" class="shop-link"><div class="category-item"><span>New Launches & Offers</span><img src="images/image (1).png" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>All Products</span><img src="images/image (2).png" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/chocolate6.jpg" alt=""></div></a>
+        <a href="#yn-love" class="shop-link"><div class="category-item"><span>Bars</span><img src="images/roasted6.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Bars</span><img src="images/roasted7.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/roasted8.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/roasted9.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Protein</span><img src="images/chocolate7.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>All Products</span><img src="images/chocolate8.jpg" alt=""></div></a>
+        <a href="" class="shop-link"><div class="category-item"><span>Why Protein</span><img src="images/chocolate8.jpg" alt=""></div></a>
       </div>
     </div>
   </div>
@@ -391,8 +438,8 @@
         <div class="yo-actions">
           <div class="yo-split">
             <select class="pack-select">
-              <option value="350" selected data-img="images/CREAMY_Dark_Chocolate-removebg-preview.png" data-price="500">Pack of 350g</option>
-              <option value="950" data-img="images/CREAMY_Dark_Chocolate-removebg-preview.png" data-price="1000">Pack of 950g</option>
+              <option class="pack" value="350" selected data-img="images/CREAMY_Dark_Chocolate-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option class ="pack" value="950" data-img="images/CREAMY_Dark_Chocolate-removebg-preview.png" data-price="1000">Pack of 950g</option>
             </select>
             <button class="yo-cta" type="button">ADD TO CART</button>
             <div class="yo-qty qty is-single" hidden>
@@ -421,8 +468,8 @@
         <div class="yo-actions">
           <div class="yo-split">
             <select class="pack-select">
-              <option value="350" selected data-img="images/CREAMY_Dates-removebg-preview.png" data-price="500">Pack of 350g</option>
-              <option value="950" data-img="images/CREAMY_Dates-removebg-preview.png" data-price="1000">Pack of 950g</option>
+              <option class="pack" value="350" selected data-img="images/CREAMY_Dates-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option class="pack" value="950" data-img="images/CREAMY_Dates-removebg-preview.png" data-price="1000">Pack of 950g</option>
             </select>
             <button class="yo-cta" type="button">ADD TO CART</button>
             <div class="yo-qty qty is-single" hidden>
@@ -451,8 +498,8 @@
         <div class="yo-actions">
           <div class="yo-split">
             <select class="pack-select">
-              <option value="350" selected data-img="images/CREAMY_Jaggery-removebg-preview.png" data-price="500">Pack of 350g</option>
-              <option value="950" data-img="images/CREAMY_Jaggery-removebg-preview.png" data-price="1000">Pack of 950g</option>
+              <option class="pack" value="350" selected data-img="images/CREAMY_Jaggery-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option class="pack" value="950" data-img="images/CREAMY_Jaggery-removebg-preview.png" data-price="1000">Pack of 950g</option>
             </select>
             <button class="yo-cta" type="button">ADD TO CART</button>
             <div class="yo-qty qty is-single" hidden>
@@ -481,8 +528,8 @@
         <div class="yo-actions">
           <div class="yo-split">
             <select class="pack-select">
-              <option value="350" selected data-img="images/CREAMY_Unsweetened-removebg-preview.png" data-price="500">Pack of 350g</option>
-              <option value="950" data-img="images/CREAMY_Unsweetened-removebg-preview.png" data-price="1000">Pack of 950g</option>
+              <option class="pack" value="350" selected data-img="images/CREAMY_Unsweetened-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option class="pack" value="950" data-img="images/CREAMY_Unsweetened-removebg-preview.png" data-price="1000">Pack of 950g</option>
             </select>
             <button class="yo-cta" type="button">ADD TO CART</button>
             <div class="yo-qty qty is-single" hidden>
@@ -511,8 +558,8 @@
         <div class="yo-actions">
           <div class="yo-split">
             <select class="pack-select">
-              <option value="350" selected data-img="images/CRUNCHY_Dark_Chocolate-removebg-preview.png" data-price="500">Pack of 350g</option>
-              <option value="950" data-img="images/CRUNCHY_Dark_Chocolate-removebg-preview.png" data-price="1000">Pack of 950g</option>
+              <option class="pack" value="350" selected data-img="images/CRUNCHY_Dark_Chocolate-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option class="pack" value="950" data-img="images/CRUNCHY_Dark_Chocolate-removebg-preview.png" data-price="1000">Pack of 950g</option>
             </select>
             <button class="yo-cta" type="button">ADD TO CART</button>
             <div class="yo-qty qty is-single" hidden>
@@ -541,8 +588,8 @@
         <div class="yo-actions">
           <div class="yo-split">
             <select class="pack-select">
-              <option value="350" selected data-img="images/CRUNCHY_Dates-removebg-preview.png" data-price="500">Pack of 350g</option>
-              <option value="950" data-img="images/CRUNCHY_Dates-removebg-preview.png" data-price="1000">Pack of 950g</option>
+              <option class="pack" value="350" selected data-img="images/CRUNCHY_Dates-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option class="pack" value="950" data-img="images/CRUNCHY_Dates-removebg-preview.png" data-price="1000">Pack of 950g</option>
             </select>
             <button class="yo-cta" type="button">ADD TO CART</button>
             <div class="yo-qty qty is-single" hidden>
@@ -571,8 +618,8 @@
         <div class="yo-actions">
           <div class="yo-split">
             <select class="pack-select">
-              <option value="300" selected data-img="images/CRUNCHY_Jaggery-removebg-preview.png" data-price="500">Pack of 350g</option>
-              <option value="950" data-img="images/CRUNCHY_Jaggery-removebg-preview.png" data-price="1000">Pack of 950g</option>
+              <option class="pack" value="300" selected data-img="images/CRUNCHY_Jaggery-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option class="pack" value="950" data-img="images/CRUNCHY_Jaggery-removebg-preview.png" data-price="1000">Pack of 950g</option>
             </select>
             <button class="yo-cta" type="button">ADD TO CART</button>
             <div class="yo-qty qty is-single" hidden>
@@ -601,8 +648,8 @@
         <div class="yo-actions">
           <div class="yo-split">
             <select class="pack-select">
-              <option value="300" selected data-img="images/CRUNCHY_Unsweetened-removebg-preview.png" data-price="500">Pack of 350g</option>
-              <option value="950" data-img="images/CRUNCHY_Unsweetened-removebg-preview.png" data-price="1000">Pack of 950g</option>
+              <option class="pack" value="300" selected data-img="images/CRUNCHY_Unsweetened-removebg-preview.png" data-price="500">Pack of 350g</option>
+              <option class="pack" value="950" data-img="images/CRUNCHY_Unsweetened-removebg-preview.png" data-price="1000">Pack of 950g</option>
             </select>
             <button class="yo-cta" type="button">ADD TO CART</button>
             <div class="yo-qty qty is-single" hidden>
@@ -618,41 +665,47 @@
   </section>
 
 
-  <section class="yn-love">
+  <section class="yn-love" id="yn-love">
   <h2 class="yn-love__title">You'll definitely love this!</h2>
 
   <div class="yn-love__grid">
 
     <article class="love-card">
+  <span class="love-badge">UPCOMING</span>
+  <div class="love-arch">
+    <img src="images/chocolate1.png" alt="Yo Nutri – Apricot Bars">
+  </div>
+  <a href="explore.html">
+    <button class="love-btn">Let’s Explore!</button>
+  </a>
+</article>
+
+
+    <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate1.png" alt="Yo Nutri – Apricot Bars">
+        <img src="images/chocolate6.jpg" alt="Yo Nutri – Peanut & Almond Bars">
       </div>
-      <button class="love-btn">Let’s Explore!</button>
+      <a href="explore.html">
+      <button class="love-btn">Let’s Explore!</button></a>
     </article>
 
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate2.png" alt="Yo Nutri – Peanut & Almond Bars">
+        <img src="images/chocolate7.jpg" alt="Yo Nutri – Coconut Bars">
       </div>
-      <button class="love-btn">Let’s Explore!</button>
+      <a href="explore.html">
+      <button class="love-btn">Let’s Explore!</button></a>
     </article>
 
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate3.png" alt="Yo Nutri – Coconut Bars">
+        <img src="images/chocolate8.jpg" alt="Yo Nutri – Salted Caramel Bars">
       </div>
-      <button class="love-btn">Let’s Explore!</button>
-    </article>
-
-    <article class="love-card">
-      <span class="love-badge">UPCOMING</span>
-      <div class="love-arch">
-        <img src="images/chocolate4.png" alt="Yo Nutri – Salted Caramel Bars">
-      </div>
-      <button class="love-btn">Let’s Explore!</button>
+      <a href="explore.html">
+      <button class="love-btn">Let’s Explore!</button></a>
     </article>
 
   </div>
@@ -663,33 +716,37 @@
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate1.png" alt="Yo Nutri – Apricot Bars">
+        <img src="images/roasted6.jpg" alt="Yo Nutri – Apricot Bars">
       </div>
-      <button class="love-btn">Let’s Explore!</button>
+      <a href="explore.html">
+      <button class="love-btn">Let’s Explore!</button></a>
     </article>
 
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate2.png" alt="Yo Nutri – Peanut & Almond Bars">
+        <img src="images/roasted7.jpg" alt="Yo Nutri – Peanut & Almond Bars">
       </div>
-      <button class="love-btn">Let’s Explore!</button>
+      <a href="explore.html">
+      <button class="love-btn">Let’s Explore!</button></a>
     </article>
 
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate3.png" alt="Yo Nutri – Coconut Bars">
+        <img src="images/roasted8.jpg" alt="Yo Nutri – Coconut Bars">
       </div>
-      <button class="love-btn">Let’s Explore!</button>
+      <a href="explore.html">
+      <button class="love-btn">Let’s Explore!</button></a>
     </article>
 
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate4.png" alt="Yo Nutri – Salted Caramel Bars">
+        <img src="images/roasted9.jpg" alt="Yo Nutri – Salted Caramel Bars">
       </div>
-      <button class="love-btn">Let’s Explore!</button>
+      <a href="explore.html">
+      <button class="love-btn">Let’s Explore!</button></a>
     </article>
 
   </div>
@@ -700,7 +757,7 @@
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate1.png" alt="Yo Nutri – Apricot Bars">
+        <img src="images/protein1.png" alt="Yo Nutri – Apricot Bars">
       </div>
       <button class="love-btn">Let’s Explore!</button>
     </article>
@@ -708,7 +765,7 @@
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate2.png" alt="Yo Nutri – Peanut & Almond Bars">
+        <img src="images/protein2.png" alt="Yo Nutri – Peanut & Almond Bars">
       </div>
       <button class="love-btn">Let’s Explore!</button>
     </article>
@@ -716,7 +773,7 @@
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate3.png" alt="Yo Nutri – Coconut Bars">
+        <img src="images/nut butter1.png" alt="Yo Nutri – Coconut Bars">
       </div>
       <button class="love-btn">Let’s Explore!</button>
     </article>
@@ -724,7 +781,7 @@
     <article class="love-card">
       <span class="love-badge">UPCOMING</span>
       <div class="love-arch">
-        <img src="images/chocolate4.png" alt="Yo Nutri – Salted Caramel Bars">
+        <img src="images/nut butter2.png" alt="Yo Nutri – Salted Caramel Bars">
       </div>
       <button class="love-btn">Let’s Explore!</button>
     </article>
@@ -816,7 +873,7 @@
   <!-- Footer banner -->
   <section class="footer-banner hero-section">
     <div class="hero-background">
-      <img src="../new Yo! Nutri/images/footeer7.jpg" alt="Footer Banner Image">
+      <img src="images/footeer7.jpg" alt="Footer Banner Image">
     </div>
   </section>
 
@@ -1313,7 +1370,6 @@
       if(!container || !track || !content) return;
 
       function setup(){
-        // keep only the first block, then clone until we overflow enough
         [...track.children].forEach((el,i)=>{ if(i) el.remove(); });
         const blockWidth = content.scrollWidth;
         let totalWidth = blockWidth;
@@ -1343,21 +1399,14 @@
       if (!container || !track || !content) return;
 
       function setup(){
-        // keep only the first content block
         [...track.children].forEach((el,i)=>{ if(i) el.remove(); });
-
-        // measure one block and clone until width is covered
         const blockWidth = content.scrollWidth;
         let totalWidth = blockWidth;
         while (totalWidth < container.clientWidth + blockWidth * 2) {
           track.appendChild(content.cloneNode(true));
           totalWidth += blockWidth;
         }
-
-        // set animation shift equal to one block
         track.style.setProperty('--shift', blockWidth + 'px');
-
-        // compute duration from pixels-per-second
         const styles = getComputedStyle(document.documentElement);
         const pps = parseFloat(styles.getPropertyValue('--px-per-sec')) || 120;
         const seconds = Math.max(6, blockWidth / pps);
@@ -1386,7 +1435,6 @@
 /* -------- Card → PDP handoff (sku, grams, price, img, title) -------- */
 (() => {
   document.querySelectorAll('.yo-card').forEach(card => {
-    // Clicks from the image or title go to PDP with params
     const links = card.querySelectorAll('.yo-arch a, .yo-title a');
     const imgEl = card.querySelector('.yo-arch img');
     const select = card.querySelector('.pack-select');
@@ -1394,7 +1442,6 @@
 
     links.forEach(a => {
       a.addEventListener('click', (e) => {
-        // allow normal open in new tab (cmd/ctrl click)
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button === 1) return;
         e.preventDefault();
 
@@ -1405,14 +1452,9 @@
         const sku   = card.dataset.sku || '';
         const title = titleEl?.innerText?.trim() || '';
 
-        // default PDP if href missing
         const href = a.getAttribute('href') || 'product-detail.html';
 
-        const params = new URLSearchParams({
-          sku, grams, price, img, title
-        });
-
-        // Navigate with query params
+        const params = new URLSearchParams({ sku, grams, price, img, title });
         location.href = href + (href.includes('?') ? '&' : '?') + params.toString();
       });
     });
@@ -1437,7 +1479,6 @@
     return Math.max(1, parseInt(v || '4', 10));
   }
   function cardStep(){
-    // one step = card width + gap (except after last visible, but good enough)
     return (cards[0]?.offsetWidth || 0) + getGap();
   }
 
@@ -1470,7 +1511,6 @@
     update();
   });
 
-  // Hover play/pause
   track.querySelectorAll('video').forEach(video => {
     video.addEventListener('mouseenter', () => video.play());
     video.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; });
@@ -1479,5 +1519,19 @@
   update();
 })();
 </script>
+<script>
+document.querySelectorAll('.category-item span').forEach(span => {
+  if (span.textContent.trim().toLowerCase() === 'protein') {
+    const a = span.closest('a');
+    a.href = '#yo-products';
+    a.addEventListener('click', e => {
+      e.preventDefault(); // do it manually so we can close the panel
+      document.querySelector('#yo-products')?.scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('shopPanel')?.classList.remove('show');
+    });
+  }
+});
+</script>
+
 </body>
 </html>
