@@ -292,10 +292,28 @@ body {
 
 /* Quote & Bottom */
 .footer-bottom {
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;   /* keeps the <p> in middle */
+  position: relative;
   margin-top: 30px;
   font-size: 14px;
+  width: 100%;
 }
+
+.footer-bottom p {
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); /* force © to exact center */
+}
+
+.footer-bottom span {
+  margin-left: auto;  /* pushes span to the right */
+  text-align: right;  /* align both lines to the right */
+  font-size: 10px;
+}
+
 
 hr {
   border: none;
